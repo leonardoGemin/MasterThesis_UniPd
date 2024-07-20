@@ -1,0 +1,58 @@
+\section[Analysis of the time performances in $k$-mer Counting]{Analysis of the time performances in k-mer Counting}
+\label{sec:kmer-counting}
+
+In this section, a detailed comparison will be made between two tools for extracting spaced $k$-mer from nucleotide sequences: DuoHash and MaskJelly \cite{ebler2022pangenome}. Both tools are set to output a FASTA file containing the spaced $k$-mer extracted from the nucleotide sequence provided as input. The generated FASTA file will serve as input for JellyFish, a software tool known for counting $k$-mer. This comparison will allow us to evaluate the efficiency and performance of the two tools in the context of preprocessing sequences for $k$-mer counting.
+
+MaskJelly is a tool developed in \verb|C++| with similar functionality to DuoHash. It is also designed for spaced $k$-mer extraction, but differs in that it only works with one spaced seed at a time. This limitation makes MaskJelly less flexible than DuoHash, and a direct comparison in single-seed mode will make it possible to assess the actual performance differences between the two tools. For a fair comparison with MaskJelly, DuoHash will be used in single-seed mode, limiting its operation to one spaced seed at a time.
+
+JellyFish is a popular $k$-mer counting software in bioinformatics. It is known for its speed and efficiency in $k$-mer counting, thanks to the use of advanced data structures such as hash tables. It should be noted that, to date, JellyFish does not directly support the handling of spaced seeds, limiting itself to the counting of contiguous $k$-mer. This limitation underlines the importance of integration with tools such as MaskJelly and DuoHash, which pre-process sequences to extract spaced $k$-mer, representing a substantial step forward in genomic research.
+
+For this comparison, both tools, DuoHash and MaskJelly, were configured to process a series of nucleotide sequences and generate FASTA files containing the extracted spaced $k$-mer. These files were then used as input for JellyFish, which performed the $k$-mer count. The entire process was evaluated in terms of execution time and resource utilisation in order to determine which tool offers better performance in preprocessing sequences. To perform a detailed comparison between the DuoHash and MaskJelly tools, four datasets were selected from those presented above: L500000, L20000, R500 and R2000. This selection provides a comprehensive overview of the performance of the tools. Representing the different seedsets, seedset W22L31 was chosen. Both tools were configured to process these nucleotide sequences and generate FASTA files containing the extracted spaced $k$-mer. These files were subsequently used as input for JellyFish, which performed the $k$-mer count. The entire process was evaluated in terms of execution time, in order to determine which tool offers better performance in preprocessing sequences. The speed-up of DuoHash compared to MaskJelly is depicted in Figure~\ref{fig:speedup-preprocessing}. As can be seen from the graph, DuoHash offers a significant performance improvement in terms of execution time compared to MaskJelly on all four datasets considered, with an average speed-up ranging between $5.19\times$ and $6.46\times$.
+
+\begin{figure}[!ht]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleE, width=0.65\textwidth]
+			\addplot coordinates {(1,6.46)(2,5.89)(3,5.95)(4,5.19)};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for DuoHash with respect to MaskJelly (pre-processing only).}
+	\label{fig:speedup-preprocessing}
+\end{figure}
+
+
+
+To gain a comprehensive understanding of the overall performance improvement provided by DuoHash, it is also crucial to compare the speed-up of the entire process, which includes both the pre-processing of the nucleotide sequences and the subsequent $k$-mer counting by JellyFish. By evaluating the total execution time for the combination of spaced $k$-mer extraction and $k$-mer counting, we can assess the impact of DuoHash's faster pre-processing on the overall workflow. Figure~\ref{fig:speedup-total} illustrates this comparison, showing the total execution time for each dataset when using DuoHash and MaskJelly. As the graph indicates, the integration of DuoHash significantly accelerates the complete process, offering a speed-up ranging between $1.90\times$ and $2.14\times$. This enhancement underscores DuoHash's efficiency not only in the preprocessing stage but also in the context of the entire $k$-mer counting workflow, making it a highly effective tool for genomic sequence analysis.
+
+\begin{figure}[!ht]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleE, width=0.65\textwidth]
+			\addplot coordinates {(1,2.08)(2,2.14)(3,1.90)(4,2.03)};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for DuoHash with respect to MaskJelly (entire process).}
+	\label{fig:speedup-total}
+\end{figure}
+
+
+
+In addition to verifying the speed-up of DuoHash compared to MaskJelly, it is interesting to evaluate the incidence of preprocessing on the entire counting process, which includes the extraction of the spaced $k$-mer and the execution of JellyFish. In Figure~\ref{fig:incidence-on-jellyfish}, each column represents the fraction of time required for preprocessing, while the red horizontal line indicates the execution time of JellyFish. DuoHash, accounting for only about 20 per cent of the total process time compared to MaskJelly's 60 per cent, saves considerable time and increases overall efficiency, making it a preferred choice for pre-processing before counting with JellyFish.
+
+\begin{figure}[!ht]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleE, ylabel={Impact of pre-processing}, width=0.65\textwidth]
+			\addplot coordinates {(1,0.61)(2,0.64)(3,0.57)(4,0.63)};
+			\addplot coordinates {(1,0.20)(2,0.23)(3,0.18)(4,0.25)};
+			
+			\addplot [red, sharp plot] coordinates {(0,1.00)(5,1.00)} node [above] at (2,1.00) {Counting} node [above] at (3,1.00) {process};
+			
+			\legend{MaskJelly, DuoHash}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Impact of pre-processing (MaskJelly and DuoHash) on the overall counting process.}
+	\label{fig:incidence-on-jellyfish}
+\end{figure}
+
+The comparison between DuoHash and MaskJelly, with JellyFish used for $k$-mer counting, confirms that DuoHash offers a substantial advantage in speed and resource efficiency, even when used in single-seed mode. This makes DuoHash a superior choice for the extraction of spaced $k$-mer. The validity of the multiple-seed version of DuoHash, demonstrated in previous sections, further highlights the flexibility and power of this tool in the context of bioinformatics applications, and its integration with JellyFish represents a significant advancement in genomics research, filling the current gap in the management of spaced seeds and optimising the entire sequence analysis process.

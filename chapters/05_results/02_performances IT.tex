@@ -1,0 +1,160 @@
+\section{Analysis of the time performances}
+\label{sec:performances}
+
+In this chapter, we present a detailed analysis of the time performance of the new tool DuoHash compared to the existing tool ntHash2. The various tests conducted were aimed at evaluating the efficiency and speed of DuoHash in comparison to ntHash2. The results are presented in terms of speed-up, which is calculated using the formula: \[ \text{speed-up} = \frac{\text{reference time}}{\text{time to be evaluated}} \] where “reference time" refers to the time taken by ntHash2 and “time to be evaluated" refers to the time taken by DuoHash.
+
+To ensure the accuracy of the results, each configuration was tested 10 times, and the average of these values was taken. This repetition helps to mitigate any anomalies or inconsistencies that may arise during individual test runs. For greater precision, the times were measured in microseconds and subsequently converted to milliseconds.
+
+Additionally, to objectively evaluate the two tools, the test scripts were optimized and compiled using the \verb|-O3| optimization option of the \verb|GNU| compiler. This ensures that both tools are operating at their highest potential performance during the tests.
+
+The detailed results of these performance evaluations are presented in this chapter and further elaborated upon in the appendix.
+
+
+
+
+	\subsection{General analysis}
+	\label{subsec:general-analysis}
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleA, width=0.65\textwidth]
+				\addplot coordinates {(1,2.41)(2,2.37)(3,2.42)(4,2.40)(5,2.34)(6,1.57)(7,1.51)(8,1.47)(9,1.47)(10,1.44)(11,1.47)(12,1.42)}; % naive
+				\addplot coordinates {(1,4.86)(2,4.75)(3,4.84)(4,4.84)(5,4.70)(6,3.17)(7,2.99)(8,2.92)(9,2.91)(10,2.86)(11,2.91)(12,2.84)}; % ISSH_single
+				
+				\addplot coordinates {(1,5.96)(2,5.90)(3,6.00)(4,6.01)(5,5.84)(6,4.12)(7,3.97)(8,3.84)(9,3.82)(10,3.34)(11,3.40)(12,3.45)}; % ISSH_multi_v1
+				\addplot coordinates {(1,0.70)(2,0.69)(3,0.69)(4,0.69)(5,0.66)(6,1.20)(7,1.68)(8,2.01)(9,2.44)(10,2.72)(11,2.90)(12,3.57)}; % ISSH_multi_col_parallel
+				
+				\legend{Naive, ISSH, MISSH\_v1, MISSH\_col\_parallel}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for seedset W26L31}
+		\label{fig:speedup-small-W26L31}
+	\end{figure}
+	
+	Lo speed-up raggiunto da DuoHash tende a rimanere costante, o in leggero calo, nei vari metodi presentati quando viene fissato il seedset, indipendentemente dal dataset da elaborare. Questa tendenza è particolarmente evidente per i dataset del gruppo “L", dove lo speed-up è più elevato. Per i dataset del gruppo “L" -~caratterizzato da reads di numero variabile, ma di lunghezza costante~- il metodo dimostra uno speed-up costante e significativo in tutti gli scenari testati. Ciò indica che il software scala in modo efficiente con il volume dei dati quando la lunghezza delle reads rimane invariata.
+	
+	Per i dataset del gruppo “R" che mantengono un numero costante di read, ma variano nella lunghezza~- lo speed-up mostra una maggiore variabilità. In questo gruppo, lo speed-up tende in genere a diminuire leggermente all'aumentare della lunghezza delle reads. Nonostante ciò, le prestazioni complessive dello strumento rimangono solide, dimostrando la sua capacità di gestire efficacemente le diverse lunghezze di reads.
+	
+	Analizzando i risultati, emerge chiaramente che il metodo \verb|MISSH_v1| prevale su tutti gli altri metodi in quasi tutte le situazioni, con uno speed-up compreso tra $\times 3.34$ e $\times 11.23$. Questa predominanza è evidente sia nei dataset del gruppo “L" sia in quelli del gruppo “R", a eccezione di un caso specifico: nel dataset “R5000", il metodo \verb|MISSH_col_parallel| supera \verb|MISSH_v1| in termini di prestazioni, arrivando ad assumere uno speed-up pari a $\times 9.05$ nel dataset L5000000. Questo risultato eccezionale richiede un'analisi più approfondita. 
+	
+	Il metodo \verb|MISSH_col_parallel| merita una trattazione a parte per le sue caratteristiche prestazionali uniche. Questo metodo mostra il suo vero potenziale con le letture più lunghe. Lo speed-up diventa particolarmente vantaggioso quando la lunghezza delle reads raggiunge e supera i 5,000bp. Questo significativo miglioramento delle prestazioni evidenzia la capacità del metodo di gestire in modo efficiente insiemi di dati complessi e di grandi dimensioni con letture lunghe. La strategia di parallelizzazione impiegata da \verb|MISSH_col_parallel| gli consente di elaborare tali insiemi di dati in modo più efficace, rendendolo una scelta ideale per gli scenari che coinvolgono lunghe sequenze genomiche.
+	
+	
+
+
+	\subsection{Performance Evaluation with Varying Seed Weight}
+	\label{subsec:performance-varying-seed-weight}
+	
+	Il peso di un seme spaziato è un fattore critico che può influenzare la sensibilità e la specificità del software. Per valutare l'impatto del peso degli spaced seed, sono stati utilizzati quattro seedset con una lunghezza fissa di 31 e pesi diversi: W14L31, W18L31, W22L31 e W26L31. 
+	
+	
+	Per i dataset del gruppo “L", lo speed-up presenta fluttuazioni senza un pattern preciso. In generale, c'è un leggero calo dello speed-up all'aumentare del peso del seed. Tuttavia, ci sono deviazioni significative verso l'alto per il seedset W18L31, indicando che questo particolare seedset offre prestazioni eccezionali in determinate condizioni. Nella Figura~\ref{fig:speedup-MISSH_v1-varying-weight-L} sono rappresentate graficamente le variazioni di speed-up per il metodo \verb|MISSH_v1| attraverso i seedset ed i dataset presi in considerazione in questo paragrafo. Il massimo speed-up raggiunto da questo gruppo di dataset è stato di $\times 11.23$ con il seedset W18L31.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleB, width=0.65\textwidth]
+				\addplot coordinates {(1,6.84)(2,10.35)(3,6.74)(4,5.84)};
+				\addplot coordinates {(1,6.74)(2,10.51)(3,6.75)(4,6.01)};
+				\addplot coordinates {(1,6.72)(2,10.82)(3,6.75)(4,6.00)};
+				\addplot coordinates {(1,6.83)(2,10.56)(3,6.71)(4,5.90)};
+				\addplot coordinates {(1,6.72)(2,11.23)(3,6.72)(4,5.96)};
+				
+				\legend{L500000, L1000000, L1500000, L2000000, L5000000}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for method \texttt{MISSH\_v1} among seedset with varying weight and dataset of “L" group.}
+		\label{fig:speedup-MISSH_v1-varying-weight-L}
+	\end{figure}
+	
+	
+	Per i dataset del gruppo “R", lo speed-up segue un trend simile a quello osservato nel gruppo “L". La tendenza generale è una diminuzione dello speed-up con l'aumentare del peso del seed. Tuttavia, le deviazioni verso l'alto osservate per il seedset W18L31 nei dataset del gruppo “L" sono molto meno pronunciate nei dataset del gruppo “R". Ciò suggerisce che, sebbene il seedset W18L31 continui a performare bene, il suo vantaggio relativo è ridotto quando si tratta di lunghezze di lettura variabili. Nella Figura~\ref{fig:speedup-MISSH_v1-varying-weight-R} sono rappresentate graficamente le variazioni di speed-up per il metodo \verb|MISSH_v1| attraverso i seedset ed i dataset presi in considerazione in questo paragrafo. Lo speed-up massimo raggiunto per i dataset del gruppo “L" è stato di $\times 10.35$ con il seedset W18L31.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleB, width=0.65\textwidth]
+				\addplot coordinates {(1,6.84)(2,10.35)(3,6.74)(4,5.84)};
+				\addplot coordinates {(1,6.36)(2,7.80)(3,6.08)(4,4.12)};
+				\addplot coordinates {(1,6.20)(2,7.57)(3,5.92)(4,3.97)};
+				\addplot coordinates {(1,5.83)(2,7.49)(3,5.51)(4,3.84)};
+				\addplot coordinates {(1,5.66)(2,7.35)(3,5.57)(4,3.82)};
+				\addplot coordinates {(1,5.35)(2,6.44)(3,5.09)(4,3.34)};
+				\addplot coordinates {(1,5.33)(2,6.42)(3,5.06)(4,3.40)};
+				\addplot coordinates {(1,5.61)(2,6.71)(3,5.25)(4,3.45)};
+				
+				\legend{R80, R200, R350, R500, R1000, R1500, R2000, R5000}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for method \texttt{MISSH\_v1} among seedset with varying weight and dataset of “R" group.}
+		\label{fig:speedup-MISSH_v1-varying-weight-R}
+	\end{figure}
+
+
+
+
+	\subsection{Performance Evaluation with Varying Seed Length}
+	\label{subsec:performance-varying-seed-length}
+	
+	La lunghezza dello spaced seed è un altro parametro cruciale che può influenzare le prestazioni del software. Per valutare l'impatto della lunghezza degli spaced seed, sono stati utilizzati seedset con lunghezze diverse e pesi fissi: W10L15, W22L31 e W32L45. Poiché sono presenti solo tre seedset, una variazione in uno di essi può influenzare significativamente l'andamento complessivo. Nonostante il pattern di comportamento sia chiaro e coerente in tutti i casi analizzati (si veda la Figura~\ref{fig:speedup-MISSH_v1-varying-length}), non si può parlare di una tendenza ben definita. Questa figura mostra chiaramente il pattern "a gradino" con il seedset W10L15 che presenta valori inferiori di speed-up rispetto ai seedset W22L31 e W32L45, che tendono a stabilizzarsi su valori più elevati.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleC, width=0.65\textwidth]
+				\addplot coordinates {(1,5.27)(2,6.72)(3,6.62)};
+				\addplot coordinates {(1,5.29)(2,6.71)(3,6.56)};
+				\addplot coordinates {(1,5.30)(2,6.75)(3,6.55)};
+				\addplot coordinates {(1,5.40)(2,6.75)(3,6.55)};
+				\addplot coordinates {(1,5.29)(2,6.74)(3,6.65)};
+				
+				\addplot coordinates {(1,4.95)(2,6.08)(3,5.81)};
+				\addplot coordinates {(1,4.78)(2,5.92)(3,5.65)};
+				\addplot coordinates {(1,4.59)(2,5.51)(3,5.46)};
+				\addplot coordinates {(1,4.61)(2,5.57)(3,5.49)};
+				\addplot coordinates {(1,3.88)(2,5.09)(3,5.00)};
+				\addplot coordinates {(1,3.91)(2,5.06)(3,5.00)};
+				\addplot coordinates {(1,4.06)(2,5.25)(3,5.11)};
+				
+				\legend{L5000000, L2000000, L1500000, L1000000, L500000, R200, R350, R500, R1000, R1500, R2000, R5000}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for method \texttt{MISSH\_v1} among seedset with varying length and dataset of both “L" and “R" groups.}
+		\label{fig:speedup-MISSH_v1-varying-length}
+	\end{figure}
+	
+	
+	Per i dataset del gruppo L, si osserva un pattern "a gradino" nello speed-up, con il primo valore (W10L15) ridotto di circa il 20\% rispetto ai successivi due valori (W22L31 e W32L45), che tendono a rimanere costanti. Questo comportamento potrebbe suggerire che, oltre una certa lunghezza del seed, l'efficienza del tool rimane stabile. Lo speed-up massimo raggiunto per i dataset del gruppo “L" è stato di $\times 6.75$ con il seedset W22L31.
+	
+	Anche per i dataset del gruppo R, lo speed-up mostra un pattern "a gradino" simile. Il valore iniziale (W10L15) è inferiore di circa il 20\% rispetto agli altri due seedset (W22L31 e W32L45), che mantengono valori costanti. Per questo gruppo di dataset, è stato raggiunto uno speed-up massimo di $\times 6.08$ con il seedset W22L31.
+
+
+
+
+	\subsection{Performance Comparison: Multiple-Seed vs. Single-Seed}
+	\label{subsec:performance-comparison-multi-vs-single-seed}
+	
+	Per confermare la validità della versione multiple-seed del software, sono state confrontate le prestazioni tra il metodo migliore per la modalità single-seed e il metodo migliore per la modalità multiple-seed. Questo confronto è cruciale per determinare se l'implementazione multiple-seed offre un vantaggio significativo rispetto alla versione single-seed. Sono stati scelti:
+	\begin{itemize}
+		\item il metodo \verb|ISSH| per la modalità single-seed;
+		\item il metodo \verb|MISSH_v1| per la modalità multi-seed;
+	\end{itemize}
+	
+	%Entrambe le versioni sono state testate utilizzando tutti i seedset ed i dataset presentati in precedenza per garantire una valutazione completa delle prestazioni.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleD, width=0.65\textwidth]
+				\addplot coordinates {(1,4.63)(2,6.39)(3,9.35)(4,5.88)(5,5.88)(6,5.93)};
+				\addplot coordinates {(1,5.40)(2,6.74)(3,10.51)(4,6.75)(5,6.01)(6,6.55)};
+				
+				\legend{ISSH, MISSH\_v1}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up comparison between single-seed and multiple-seed versions (L1000000 dataset).}
+		\label{fig:single-vs-multi-seed}
+	\end{figure}
+	
+	I risultati rappresentati in Figura~\ref{fig:single-vs-multi-seed} mostrano che lo speed-up delle due versioni, anche se ristretto al solo dataset L1000000, non differisce in modo sostanziale, ma la versione multiple-seed prevale in termini di prestazioni complessive.

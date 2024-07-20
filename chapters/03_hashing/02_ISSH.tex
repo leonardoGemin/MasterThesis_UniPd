@@ -1,0 +1,99 @@
+\section{ISSH: Iterative Spaced Seed Hashing}
+\label{sec:ISSH}
+
+The \acs{ISSH} algorithm \cite{petrucci2020issh} was born as a response to the request for greater optimisation of the \acs{FSH} software. The latter, in fact, reuses part of a previous hash value to re-read and re-encode as few symbols as possible. With the new algorithm, \acs{ISSH}, the authors attempted to further reduce the number of symbols to be re-read to a single symbol. This was done by using not only the previous hash that maximises the number of symbols to be reused, but by combining the use of several previous hashes that together cover almost all the symbols that make up the new $Q$-gram.
+
+It is necessary to introduce a new definition of $\mathcal{C}_{g,\; j}$ that defines the positions of $Q$ that, after $j$ shift, continue to be in $Q$ with the property that the positions $k$ and $k + j$ both belong to $Q$ and are separated by $j - g - 1$ (not necessarily consecutive) characters \texttt{1}: \[ \mathcal{C}_{g,\; j} = \{ k \in Q \;|\; k + j \in Q \wedge m(k) = m(k + j) - m(j) + m(g) \}. \] The set $\mathcal{C}_{0,\; j}$ corresponds to the definition of $\mathcal{C}_j$ given by \citeauthor*{girotto2018fsh} in \citetitle{girotto2018fsh} \cite{girotto2018fsh}. This is because in the algorithm \acs{FSH} we always take the position $0$ of $h(x[j + Q])$ as the starting point.
+
+\begin{example}
+	Let $x$ and $Q$ be the same of the previous example. In this example, the calculation of $\mathcal{C}_{0,\; 2}$ is shown for the calculation of $h(x[2 + Q])$, $h(x[0 + Q])$ having already been calculated previously.
+	
+	\begin{center}
+		\begin{tabular}{r || cc|ccccccc|cc}
+			$k$ & & & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+			\midrule
+			$Q$ & & & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} \\
+			$m(k)$ & & & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 \\
+			\midrule
+			$Q <\!< 2$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & & \\
+			$m(k + 2)$ & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 & & \\
+			\midrule
+			$Q$ & & & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} \\
+			$Q <\!< 2$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & & \\
+			$(k \in Q) \wedge (k + 2 \in Q)$ & & & T & F & T & F & T & F & T & & \\
+			\midrule
+			$m(k)$ & & & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 \\
+			$m(k + 2) - m(2) + m(0)$ & -2 & -1 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & & \\
+			$m(k) = m(k + 2) - m(2) + m(0)$ & & & T & T & F & F & F & F & F & & \\
+			\midrule
+			$\mathcal{C}_{0,\; 2}$ & & & 0 & & & & & & & & \\
+		\end{tabular}
+	\end{center}
+	
+	Thus the only position recoverable from $h(x[0 + Q])$ is $\mathcal{C}_{0,\; 2} = \{ 0 \}$.
+	
+	If, on the other hand, the first position of $h(x[0 + Q])$ was skipped and the hash was considered from its second position, $\mathcal{C}_{1,\; 2}$ would be obtained:
+	
+	\begin{center}
+		\begin{tabular}{r || cc|ccccccc|cc}
+			$k$ & & & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+			\midrule
+			$Q$ & & & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} \\
+			$m(k)$ & & & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 \\
+			\midrule
+			$Q <\!< 2$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & & \\
+			$m(k + 2)$ & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 & & \\
+			\midrule
+			$Q$ & & & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} \\
+			$Q <\!< 2$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & & \\
+			$(k \in Q) \wedge (k + 2 \in Q)$ & & & T & F & T & F & T & F & T & & \\
+			\midrule
+			$m(k)$ & & & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 \\
+			$m(k + 2) - m(2) + m(1)$ & -1 & 0 & 1 & 2 & 2 & 3 & 3 & 4 & 4 & & \\
+			$m(k) = m(k + 2) - m(2) + m(1)$ & & & F & F & T & T & T & T & T & & \\
+			\midrule
+			$\mathcal{C}_{1,\; 2}$ & & & & & 2 & & 4 & & 6 & & \\
+		\end{tabular}
+	\end{center}
+	
+	In the last case, the number of symbols reusable by the hash $h(x[0 + Q])$ to produce the hash $h(x[2 + Q])$ increases, being $\mathcal{C}_{1,\; 2} = \{ 2, 4, 6 \}$.
+\end{example}
+
+The new algorithm, Algorithm~\ref{alg:ISSH} proposed by \citeauthor*{petrucci2020issh} aims to improve the efficiency of hash computation by using an iterative technique that, instead of relying only on the best previous hash, considers all previous hashes to create a combination that covers all the symbols needed for $h(x[i + Q])$, except the last one.
+
+For this, the function $BestPrev(k,\; Q')$ is defined which returns a pair $(g,\; j)$ that identifies the best previous hash, $h(x[i - j + Q])$, from which $|\mathcal{C}_{g,\; j} \cap Q'|$ symbols, after removing its first $g$ symbols: \[ BestPrev(k,\; Q') = \argmax_{g \in \{ 0, 1, \dots, k - 1 \},\; j \in \{ 1, 2, \dots, k \}} |\mathcal{C}_{g,\; j} \cap Q'|. \] For the extraction of useful symbols from the previous hashes, a mask, $Mask(g,\; j)$, is defined to filter the relevant positions.
+
+\begin{algorithm}[!ht]
+	\caption{ISSH: Iterative Spaced Seed Hashing}
+	\label{alg:ISSH}
+	$h_0 \gets \text{compute } h(x[0 + Q])$\;
+	\For{$i \gets 1$ \KwTo $|x| - s(Q)$}{
+		\If{$i < s(Q)$}{
+			$Q' \gets Q$\;
+			\While{$|Q'| \neq 1$}{
+				$(g,\; j) \gets BestPrev(i,\; Q')$\;
+				\If{$|\mathcal{C}_{g,\; j} \cap Q'| = 0$}{
+					Exit while\;
+				}
+				\Else{
+					$h_i \gets h_i$ \KwOr $((h_{i - j}$ \KwAnd $Mask(g,\; j)) >\!> (j \cdot \log_2 |\mathcal{A}|))$\;
+					$Q' \gets Q' \setminus \mathcal{C}_{g,\; j}$\;
+				}
+			}
+			\ForAll{$k \in Q'$}{
+				insert $encode(x_{i + k})$ at position $m(k) \cdot \log_2 |\mathcal{A}|$ of $h_i$\;
+			}
+		}
+		\Else{
+			$Q' \gets Q$\;
+			\While{$|Q'| \neq 1$}{
+				$(g,\; j) \gets BestPrev(s(Q) - 1,\; Q')$\;
+				$h_i \gets h_i$ \KwOr $((h_{i - j}$ \KwAnd $Mask(g,\; j)) >\!> (j \cdot \log_2 |\mathcal{A}|))$\;
+				$Q' \gets Q' \setminus \mathcal{C}_{g,\; j}$\;
+			}
+			insert $encode(x_{i + s(Q) - 1})$ at last position of $h_i$\;
+		}
+	}
+\end{algorithm}
+
+Demonstrating a noteworthy average acceleration of computation, \acs{ISSH} yields a speedup ranging between $3.5\times$ to $7\times$ compared to traditional hash value calculations. This enhancement varies based on the density of spaced seeds and the length of reads under consideration. Across all conducted experiments, \acs{ISSH} consistently surpasses the performance of existing algorithms, promising significant efficiency gains in computational tasks reliant on spaced seed hashing methodologies.

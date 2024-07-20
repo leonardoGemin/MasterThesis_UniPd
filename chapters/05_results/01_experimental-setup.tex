@@ -1,0 +1,122 @@
+\section{Tools and Experimental Setup}
+\label{sec:experimental-setup}
+
+In this section, the tools and experimental setup used for the validation and testing of the developed software are described. The analysis focuses on the different datasets, seedset, and computational platform employed. Each component is critical in assessing the performance, efficiency, and scalability of the software under various conditions and constraints. This comprehensive setup ensures that the software is rigorously tested and its capabilities thoroughly evaluated.
+
+
+
+
+	\subsection{Dataset}
+	\label{subsec:dataset}
+	
+	For the validation and testing of the developed software, two distinct groups of artificial datasets were used, designed in such a way as to vary one of the two main parameters: the length and the number of reads. The structure of each group, summarised in Table~\ref{tab:dataset}, is described in detail here:
+	\begin{itemize}
+		\item the first group of datasets, denoted by the letter “L", is characterised by reads of a constant length of 80bp. The variability between the datasets in this group is given solely by the number of reads, which varies from a minimum of 500,000 to a maximum of 5,000,000. This variation makes it possible to assess the performance of the software in relation to the volume of data processed, while keeping the length of the reads constant.
+		
+		\item the second group of datasets, denoted by the letter “R", keeps the number of reads constant at 500,000. The length of the reads in this group varies from 250 to 5,000bp. This makes it possible to examine the impact of sequence length on software performance, while keeping the number of reads unchanged.
+	\end{itemize}
+	
+	The heterogeneity of the datasets was designed to test the software under different conditions and simulate real usage scenarios. In particular, the L-group datasets allow us to observe how the software scales as the volume of data increases, while the R-group datasets allow us to understand how software performance is affected by the length of reads. These analyses are crucial in assessing the efficiency, speed and scalability of the software, ensuring that it can adequately handle different types of genomic data.
+
+	\begin{table}[ht!]
+		\centering
+		\begin{tabular}{l r r}
+			\textbf{Dataset} & \textbf{Number of reads} & \textbf{Reads length} \\
+			\toprule
+			L500000 & 500,000 & 80 \\
+			L1000000 & 1,000,000 & 80 \\
+			L1500000 & 1,500,000 & 80 \\
+			L2000000 & 2,000,000 & 80 \\
+			L5000000 & 5,000,000 & 80 \\
+			\midrule
+			R80 & 500,000 & 80 \\
+			R200 & 500,000 & 250 \\
+			R350 & 500,000 & 350 \\
+			R500 & 500,000 & 500 \\
+			R1000 & 500,000 & 1,000 \\
+			R1500 & 500,000 & 1,500 \\
+			R2000 & 500,000 & 2,000 \\
+			R5000 & 500,000 & 5,000 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Number of reads and average lengths for each of the dataset used in the experiments.}
+		\label{tab:dataset}
+	\end{table}
+
+
+
+
+	\subsection{Seedset}
+	\label{subsec:seedset}
+	
+	In the initial design phase of the experimental setup, the use of the same set of spaced seeds (seedset) used in previous versions of the software was considered. However, to enable an accurate comparison with the ntHash2 tool, it was necessary to modify the spaced seeds so that they were symmetrical. For ntHash2, in fact, the symmetry of the spaced seeds is fundamental for the calculation of the reverse hashing\footnote{It is not necessary, instead, for the calculation of the forward hash only.}. It is important to emphasise that the new version of \acs{MISSH} does not require spaced seed symmetry, which is a considerable advantage in terms of flexibility: accepting symmetric seeds and retaining the ability to support asymmetric variants ensures that the tool remains robust and able to meet the different needs and preferences of users.
+	
+	Each spaced seed set is initially composed of three sets of three spaced seeds, designed to meet specific criteria:
+	\begin{itemize}
+		\item maximisation of the probability of success \cite{ounit2016higher},
+		\item minimisation of overlap complexity \cite{hahn2016rasbhari},
+		\item maximisation of sensitivity \cite{hahn2016rasbhari}.
+	\end{itemize}
+	
+	
+	\begin{example}
+		Below is an example of the original seedset W22L31, which groups spaced seeds of weight 22 and length 31.
+		\begin{center}
+			\begin{tabular}{l r}
+				\multicolumn{2}{l}{\bfseries Spaced seeds maximizing the hit probability} \\
+				\toprule
+				Q1 & 1111011101110010111001011011111 \\
+				Q2 & 1111101011100101101110011011111 \\
+				Q3 & 1111101001110101101100111011111 \\
+				\midrule
+				\multicolumn{2}{l}{\bfseries Spaced seeds minimizing the overlap complexity} \\
+				\toprule
+				Q4 & 1111010111010011001110111110111 \\
+				Q5 & 1110111011101111010010110011111 \\
+				Q6 & 1111101001011100111110101101111 \\
+				\midrule
+				\multicolumn{2}{l}{\bfseries Spaced seeds maximizing the sensitivity} \\
+				\toprule
+				Q7 & 1111011110011010111110101011011 \\
+				Q8 & 1110101011101100110100111111111 \\
+				Q9 & 1111110101101011100111011001111 \\
+				\bottomrule
+			\end{tabular}
+		\end{center}
+	\end{example}
+	
+	A total of six seedsets of different weights and lengths were used, as shown in Table~\ref{tab:seedset}.
+	\begin{table}[!ht]
+		\centering
+		\begin{tabular}{l l}
+			\textbf{Seedset} & \textbf{Brief description} \\
+			\toprule
+			W10L15 & this seedset contains spaced seeds of weight 10 and length 15 \\
+			W14L31 & this seedset contains seeds of weight 14 and length 31 \\
+			W18L31 & seedset with weight 18 and length 31 \\
+			W22L31 & includes spaced seed of weight 22 and length 31 \\
+			W26L31 & with weight 26 and length 31 \\
+			W32L45 & seedset with weight 32 and length 45 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Seedset used in the experiments.}
+		\label{tab:seedset}
+	\end{table}
+	
+	The heterogeneity of the seedsets makes it possible to assess the efficiency of the tool in various situations. In particular, the four seedsets with a length of 31 allow the tool's efficiency to be analysed as weight increases. This diversity of seedsets is fundamental to understanding how the tool performs under different conditions and constraints, offering a complete overview of its capabilities. 
+	
+	The use of seedsets with varying weights and lengths makes it possible to examine the impact of these parameters on tool performance. Seedsets with higher weights tend to have higher sensitivity, while those with longer lengths can improve specificity. This balance between sensitivity and specificity is crucial to optimise the use of the tool in practical applications. The choice of a diverse set of spaced seeds allowed for a thorough and versatile analysis of the tool, ensuring that its performance is adequately tested and validated in a wide range of possible situations.
+	
+	The flexibility introduced by the acceptance of symmetric and asymmetric spaced seeds represents a significant step forward in the tool's evolution, making it suitable for a variety of application contexts.
+	
+	
+	
+	
+	\subsection{Machine}
+	\label{subsec:machine}
+	
+	In the experimental setup, the computational tasks were performed on a personal MacBook Pro, late 2020 model, equipped with the revolutionary Apple M1 processor. This processor, based on the \verb|arm64| architecture, offers remarkable speed and efficiency thanks to its octa-core CPU configuration, which includes four high-performance cores and four high-efficiency cores, enabling seamless multitasking and energy optimisation. In addition, the M1 chip utilises a unified memory architecture, integrating RAM directly into the processor package for improved performance and power efficiency. With 16GB of unified memory at its disposal, the MacBook Pro M1 offers unparalleled responsiveness and fluidity, making it an ideal platform for computational analysis.
+
+
+	The \verb|arm64| architecture of the M1 chip provided a smooth transition from traditional \verb|x86| processors during code compilation. One of the main considerations was the need to explicitly use version 13 of the \verb|g++| compiler. This adjustment ensured the compatibility and optimal performance of the algorithms on the Apple M1 chip, emphasising its versatility and effectiveness in handling diverse computational tasks.
+	

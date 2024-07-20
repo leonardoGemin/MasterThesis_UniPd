@@ -1,0 +1,16 @@
+\chapter{Introduction}
+\label{chp:introduction}
+
+Bioinformatics has changed the way we understand and analyze biological sequences, thereby opening up new vistas in scientific research and practical applications. The sequence classification which is a problem highly essential in this area has numerous applications that range from phylogenetic reconstruction to protein classification, mapping metagenomic reads to oligonucleotide design.
+
+However, alignment as a widespread technique of sequence classification has certain limitations in terms of handling large data sets produced by modern sequencing technologies. Alignment-free approaches were introduced for that purpose and they are primarily based on splitting sequences into consecutive $k$-mer subsequences and indexing them with appropriate data structures. This allowed much faster processing, but also decreased sensitivity because exact matches for every position of a $k$-mer were required.
+
+To overcome this limitation, there have been variations of the exact matches of the $k$-mers such as allowing longer matches with errors or non-consecutive matches within the $k$-mer itself. In this regard was a significant breakthrough when “spaced seeds,” fixed-length patterns that allow wildcards at specific positions were introduced. Seeds like these have been shown to be able to significantly improve the ability to detect relevant similarities between different sequences thus enabling more efficient algorithms to be applied in various areas of bioinformatics.
+
+Nevertheless, spaced seeds tend to result in substantial delays during execution time compared to $k$-mer-based solutions due to extra complexities involved in indexing/hashing sequences. Consequently, efforts have been directed at improving hashing methods for spaced seeds so as to enhance performance without affecting sensitivity.
+
+%There will therefore be an examination of recent developments concerning optimization of spaced seed hashing and assessment on their potential applicability within specific situations such as classifying metagenomic reads. By critically assessing existing methodologies as well as coming up with novel ones, we intend to promote the continuity of bioinformatics evolution and increase its role in life sciences.
+
+
+\subimport{}{01_purpose}
+\subimport{}{02_organization}

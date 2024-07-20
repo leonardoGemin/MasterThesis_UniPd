@@ -1,0 +1,140 @@
+\section{Tools and Experimental Setup}
+\label{sec:experimental-setup}
+
+In questa sezione vengono descritti gli strumenti e la configurazione sperimentale utilizzati per la validazione e il test del software sviluppato. L'analisi si concentra sui diversi set di dati, sull'insieme di semi e sulla piattaforma di calcolo utilizzata. Ogni componente è fondamentale per valutare le prestazioni, l'efficienza e la scalabilità del software in varie condizioni e vincoli. Questa configurazione completa assicura che il software sia testato in modo rigoroso e che le sue capacità siano valutate in modo approfondito.
+
+
+
+
+	\subsection{Dataset}
+	\label{subsec:dataset}
+	
+	%Per la validazione e il test del software sviluppato, sono stati utilizzati due gruppi distinti di dataset artificiali, progettati in modo tale da variare uno dei due parametri principali: la lunghezza e il numero di reads. La struttura di ciascun gruppo, riassunta nella Tabella~\ref{tab:dataset}, è qui descritta in dettaglio:
+	%\begin{itemize}
+	%	\item il primo gruppo di dataset, indicato con la lettera “L", è caratterizzato da reads di lunghezza costante pari a 80bp. La variabilità tra i dataset di questo gruppo è data esclusivamente dal numero di reads, che varia da un minimo di 500.000 fino a un massimo di 5.000.000. Questa variazione permette di valutare le prestazioni del software in relazione al volume di dati processati, mantenendo costante la lunghezza delle reads.
+	%	
+	%	\item il secondo gruppo di dataset, indicato con la lettera “R", mantiene costante il numero di reads a 500.000. La lunghezza delle reads in questo gruppo varia da 250 a 5.000bp. Questo permette di esaminare l'impatto della lunghezza delle sequenze sulle prestazioni del software, mantenendo invariato il numero di reads.
+	%\end{itemize}
+	For the validation and testing of the developed software, two distinct groups of artificial datasets were used, designed in such a way as to vary one of the two main parameters: the length and the number of reads. The structure of each group, summarised in Table~\ref{tab:dataset}, is described in detail here:
+	\begin{itemize}
+		\item the first group of datasets, denoted by the letter “L", is characterised by reads of a constant length of 80bp. The variability between the datasets in this group is given solely by the number of reads, which varies from a minimum of 500,000 to a maximum of 5,000,000. This variation makes it possible to assess the performance of the software in relation to the volume of data processed, while keeping the length of the reads constant.
+		
+		\item the second group of datasets, denoted by the letter “R", keeps the number of reads constant at 500,000. The length of the reads in this group varies from 250 to 5,000bp. This makes it possible to examine the impact of sequence length on software performance, while keeping the number of reads unchanged.
+	\end{itemize}
+	
+	%L'eterogeneità dei dataset è stata concepita per testare il software sotto condizioni diverse e simulare scenari reali di utilizzo. In particolare, i dataset del gruppo L permettono di osservare come il software scala con l'aumentare del volume dei dati, mentre i dataset del gruppo R permettono di comprendere come le prestazioni del software siano influenzate dalla lunghezza delle reads. Queste analisi sono fondamentali per valutare l'efficienza, la velocità e la scalabilità del software, assicurando che esso possa gestire adeguatamente diverse tipologie di dati genomici.
+	The heterogeneity of the datasets was designed to test the software under different conditions and simulate real usage scenarios. In particular, the L-group datasets allow us to observe how the software scales as the volume of data increases, while the R-group datasets allow us to understand how software performance is affected by the length of reads. These analyses are crucial in assessing the efficiency, speed and scalability of the software, ensuring that it can adequately handle different types of genomic data.
+
+	\begin{table}[ht!]
+		\centering
+		\begin{tabular}{l r r}
+			\textbf{Dataset} & \textbf{Number of reads} & \textbf{Reads length} \\
+			\toprule
+			L5000000 & 5.000.000 & 80 \\
+			L2000000 & 2.000.000 & 80 \\
+			L1500000 & 1.500.000 & 80 \\
+			L1000000 & 1.000.000 & 80 \\
+			L500000 & 500.000 & 80 \\
+			\midrule
+			R200 & 500.000 & 250 \\
+			R350 & 500.000 & 350 \\
+			R500 & 500.000 & 500 \\
+			R1000 & 500.000 & 1.000 \\
+			R1500 & 500.000 & 1.500 \\
+			R2000 & 500.000 & 2.000 \\
+			R5000 & 500.000 & 5.000 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Number of reads and average lengths for each of the dataset used in the experiments.}
+		\label{tab:dataset}
+	\end{table}
+
+
+
+
+	\subsection{Seedset}
+	\label{subsec:seedset}
+	
+	%Nella fase di progettazione iniziale del setup sperimentale, si è considerato l'uso dello stesso set di spaced seed (seedset) utilizzato nelle versioni precedenti del software. Tuttavia, per consentire un confronto accurato con il tool ntHash2, è stato necessario modificare gli spaced seed in modo tale che risultassero simmetrici. Per ntHash2, infatti, la simmetria degli spaced seed è fondamentale per il calcolo del reverse hashing\footnote{Non è necessaria, invece, per il calcolo del solo forward hash}. È importante sottolineare che la nuova versione di MISSH non richiede la simmetria degli spaced seed, il che rappresenta un notevole vantaggio in termini di flessibilità: accettare seed simmetrici e mantenere la capacità di supportare varianti asimmetriche garantisce che il tool rimanga robusto e in grado di soddisfare le diverse esigenze e preferenze degli utenti.
+	
+	%Ogni set di spaced seed è composto inizialmente da tre gruppi di tre spaced seed, progettati per rispondere a specifici criteri:
+	%\begin{itemize}
+	%	\item massimizzazione delle probabilità di successo,
+	%	\item minimizzazione della complessità di overlap,
+	%	\item massimizzazione della sensibilità.
+	%\end{itemize}
+	In the initial design phase of the experimental setup, the use of the same set of spaced seeds (seedset) used in previous versions of the software was considered. However, to enable an accurate comparison with the ntHash2 tool, it was necessary to modify the spaced seeds so that they were symmetrical. For ntHash2, in fact, the symmetry of the spaced seeds is fundamental for the calculation of the reverse hashing\footnote{It is not necessary, instead, for the calculation of the forward hash only.}. It is important to emphasise that the new version of \acs{MISSH} does not require spaced seed symmetry, which is a considerable advantage in terms of flexibility: accepting symmetric seeds and retaining the ability to support asymmetric variants ensures that the tool remains robust and able to meet the different needs and preferences of users.
+	
+	Each spaced seed set is initially composed of three sets of three spaced seeds, designed to meet specific criteria:
+	\begin{itemize}
+		\item maximisation of the probability of success,
+		\item minimisation of overlap complexity,
+		\item maximisation of sensitivity.
+	\end{itemize}
+	
+	
+	\begin{example}
+		Below is an example of the original seedset W22L31, which groups spaced seeds of weight 22 and length 31.
+		\begin{center}
+			\begin{tabular}{l r}
+				\toprule
+				\multicolumn{2}{l}{\bfseries Spaced seeds maximizing the hit probability} \\
+				Q1 & 1111011101110010111001011011111 \\
+				Q2 & 1111101011100101101110011011111 \\
+				Q3 & 1111101001110101101100111011111 \\
+				\midrule
+				\multicolumn{2}{l}{\bfseries Spaced seeds minimizing the overlap complexity} \\
+				Q4 & 1111010111010011001110111110111 \\
+				Q5 & 1110111011101111010010110011111 \\
+				Q6 & 1111101001011100111110101101111 \\
+				\midrule
+				\multicolumn{2}{l}{\bfseries Spaced seeds maximizing the sensitivity} \\
+				Q7 & 1111011110011010111110101011011 \\
+				Q8 & 1110101011101100110100111111111 \\
+				Q9 & 1111110101101011100111011001111 \\
+				\bottomrule
+			\end{tabular}
+		\end{center}
+	\end{example}
+	
+	%Complessivamente, sono stati utilizzati sei seedset di differenti pesi e lunghezze, come indicato nella Tabella~\ref{tab:seedset}.
+	A total of six seedsets of different weights and lengths were used, as shown in Table~\ref{tab:seedset}.
+	\begin{table}[!ht]
+		\centering
+		\begin{tabular}{l l}
+			\textbf{Seedset} & \textbf{Brief description} \\
+			\toprule
+			W10L15 & this seedset contains spaced seeds of weight 10 and length 15 \\
+			W14L31 & this seedset contains seeds of weight 14 and length 31 \\
+			W18L31 & seedset with weight 18 and length 31 \\
+			W22L31 & includes spaced seed of weight 22 and length 31 \\
+			W26L31 & with weight 26 and length 31 \\
+			W32L45 & seedset with weight 32 and length 45 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Seedset used in the experiments.}
+		\label{tab:seedset}
+	\end{table}
+	
+	%L'eterogeneità dei seedset permette di valutare l'efficienza del tool in varie situazioni. In particolare, i quattro seedset con lunghezza di 31 permettono di analizzare l'efficienza del tool all'aumentare del peso. Questa diversità di seedset è fondamentale per comprendere come il tool performa sotto diverse condizioni e vincoli, offrendo una panoramica completa delle sue capacità. 
+	The heterogeneity of the seedsets makes it possible to assess the efficiency of the tool in various situations. In particular, the four seedsets with a length of 31 allow the tool's efficiency to be analysed as weight increases. This diversity of seedsets is fundamental to understanding how the tool performs under different conditions and constraints, offering a complete overview of its capabilities. 
+	
+	%L'uso di seedset con pesi e lunghezze variabili consente di esaminare l'impatto di questi parametri sulle prestazioni del tool. I seed con peso maggiore tendono ad avere una sensibilità più alta, mentre quelli con lunghezza maggiore possono migliorare la specificità. Questo equilibrio tra sensibilità e specificità è cruciale per ottimizzare l'uso del tool in applicazioni pratiche. La scelta di un set diversificato di spaced seed ha permesso di condurre un'analisi approfondita e versatile del tool, garantendo che le sue performance siano adeguatamente testate e validate in un'ampia gamma di situazioni possibili.
+	The use of seedsets with varying weights and lengths makes it possible to examine the impact of these parameters on tool performance. Seedsets with higher weights tend to have higher sensitivity, while those with longer lengths can improve specificity. This balance between sensitivity and specificity is crucial to optimise the use of the tool in practical applications. The choice of a diverse set of spaced seeds allowed for a thorough and versatile analysis of the tool, ensuring that its performance is adequately tested and validated in a wide range of possible situations.
+	
+	%La flessibilità introdotta dall'accettazione di spaced seed simmetrici e asimmetrici rappresenta un significativo passo avanti nell'evoluzione del tool, rendendolo adatto a una varietà di contesti applicativi.
+	The flexibility introduced by the acceptance of symmetric and asymmetric spaced seeds represents a significant step forward in the tool's evolution, making it suitable for a variety of application contexts.
+	
+	
+	
+	
+	\subsection{Machine}
+	\label{subsec:machine}
+	
+	%Nel setup sperimentale, i compiti computazionali sono stati eseguiti su un MacBook Pro personale, modello di fine 2020, dotato del rivoluzionario processore Apple M1. Questo processore, basato sull'architettura \verb|arm64|, offre velocità ed efficienza notevoli grazie alla configurazione CPU octa-core, che include quattro core ad alte prestazioni e quattro core ad alta efficienza, permettendo un multitasking senza interruzioni e un'ottimizzazione energetica. Inoltre, il chip M1 utilizza un'architettura di memoria unificata, integrando la RAM direttamente nel package del processore per migliorare le prestazioni e l'efficienza energetica. Con 16GB di memoria unificata a disposizione, il MacBook Pro M1 offre una reattività e fluidità senza pari, rendendolo una piattaforma ideale per le analisi computazionali.
+	In the experimental setup, the computational tasks were performed on a personal MacBook Pro, late 2020 model, equipped with the revolutionary Apple M1 processor. This processor, based on the \verb|arm64| architecture, offers remarkable speed and efficiency thanks to its octa-core CPU configuration, which includes four high-performance cores and four high-efficiency cores, enabling seamless multitasking and energy optimisation. In addition, the M1 chip utilises a unified memory architecture, integrating RAM directly into the processor package for improved performance and power efficiency. With 16GB of unified memory at its disposal, the MacBook Pro M1 offers unparalleled responsiveness and fluidity, making it an ideal platform for computational analysis.
+
+
+	%L'architettura \verb|arm64| del chip M1 ha rappresentato una transizione senza particolari ostacoli rispetto ai processori tradizionali \verb|x86| durante la compilazione del codice. Una delle considerazioni principali è stata la necessità di utilizzare esplicitamente la versione 13 del compilatore \verb|g++|. Questo aggiustamento ha garantito la compatibilità e le prestazioni ottimali degli algoritmi sul chip Apple M1, sottolineando la sua versatilità ed efficacia nella gestione di compiti computazionali diversificati.
+	The \verb|arm64| architecture of the M1 chip provided a smooth transition from traditional \verb|x86| processors during code compilation. One of the main considerations was the need to explicitly use version 13 of the \verb|g++| compiler. This adjustment ensured the compatibility and optimal performance of the algorithms on the Apple M1 chip, emphasising its versatility and effectiveness in handling diverse computational tasks.
+	

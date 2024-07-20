@@ -1,0 +1,131 @@
+\chapter{Additional Speed-up Graphs}
+\label{chp:additional-speedup-graphs}
+
+
+In this chapter, all speed-ups of the new DuoHash tool compared to the ntHash2 tool, obtained in the experiments conducted in the course of this study, are presented in detail. Datasets and seedsets are already described in the Chapter~\ref{chp:results} on pages~\pageref{subsec:dataset} and following.
+
+\begin{sidewaysfigure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleA, height=12.5cm]
+			\addplot coordinates {(1,3.50)(2,3.52)(3,3.50)(4,3.51)(5,3.50)(6,3.19)(7,3.08)(8,3.05)(9,3.02)(10,2.96)(11,2.97)(12,2.90)}; % naive
+			\addplot coordinates {(1,3.93)(2,4.00)(3,3.92)(4,3.92)(5,3.92)(6,3.67)(7,3.52)(8,3.54)(9,3.55)(10,3.49)(11,3.51)(12,3.44)}; % speedup_previous
+			\addplot coordinates {(1,4.00)(2,4.06)(3,4.01)(4,3.99)(5,3.99)(6,3.60)(7,3.44)(8,3.43)(9,3.41)(10,3.34)(11,3.36)(12,3.29)}; % ISSH_single
+			
+			\addplot coordinates {(1,3.84)(2,3.89)(3,3.85)(4,3.84)(5,3.84)(6,3.49)(7,3.35)(8,3.31)(9,3.25)(10,3.05)(11,3.05)(12,3.08)}; % speedup_multi_previous
+			\addplot coordinates {(1,5.29)(2,5.40)(3,5.30)(4,5.29)(5,5.27)(6,4.95)(7,4.78)(8,4.59)(9,4.61)(10,3.88)(11,3.91)(12,4.06)}; % ISSH_multi_v1
+			\addplot coordinates {(1,4.26)(2,4.31)(3,4.27)(4,4.27)(5,4.27)(6,3.88)(7,3.76)(8,3.74)(9,3.69)(10,3.45)(11,3.45)(12,3.49)}; % ISSH_multi_col
+			\addplot coordinates {(1,0.58)(2,0.58)(3,0.59)(4,0.59)(5,0.59)(6,1.25)(7,1.77)(8,2.25)(9,3.15)(10,3.14)(11,3.39)(12,4.53)}; % ISSH_multi_col_parallel
+			\addplot coordinates {(1,3.91)(2,3.95)(3,3.90)(4,3.88)(5,3.88)(6,3.63)(7,3.49)(8,3.45)(9,3.45)(10,3.34)(11,3.37)(12,3.38)}; % ISSH_multi_row
+			
+			\legend{Naive, FSH, ISSH, MFSH, DuoHash, DuoHash\_col, DuoHash\_parallel, DuoHash\_row}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for seedset W10L15 (multiple-seed).}
+	\label{fig:speedup-1}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleA, height=12.5cm]
+			\addplot coordinates {(1,4.55)(2,4.62)(3,4.57)(4,4.60)(5,4.56)(6,3.96)(7,3.87)(8,3.80)(9,3.77)(10,3.73)(11,3.74)(12,3.73)}; % naive
+			\addplot coordinates {(1,4.66)(2,4.72)(3,4.66)(4,4.69)(5,4.66)(6,4.34)(7,4.22)(8,4.20)(9,4.24)(10,4.21)(11,4.22)(12,4.20)}; % speedup_previous
+			\addplot coordinates {(1,5.89)(2,5.98)(3,5.90)(4,5.94)(5,5.89)(6,5.26)(7,4.99)(8,4.94)(9,4.98)(10,4.94)(11,4.97)(12,4.91)}; % ISSH_single
+
+			\addplot coordinates {(1,4.47)(2,4.48)(3,4.40)(4,4.46)(5,4.43)(6,3.82)(7,3.65)(8,3.56)(9,3.60)(10,3.40)(11,3.39)(12,3.48)}; % speedup_multi_previous
+			\addplot coordinates {(1,6.84)(2,6.74)(3,6.72)(4,6.83)(5,6.72)(6,6.36)(7,6.20)(8,5.83)(9,5.66)(10,5.35)(11,5.33)(12,5.61)}; % ISSH_multi_v1
+			\addplot coordinates {(1,6.07)(2,6.07)(3,5.98)(4,6.04)(5,6.03)(6,5.40)(7,5.26)(8,5.18)(9,5.00)(10,4.85)(11,4.85)(12,4.99)}; % ISSH_multi_col
+			\addplot coordinates {(1,0.75)(2,0.77)(3,0.76)(4,0.76)(5,0.76)(6,1.72)(7,2.52)(8,3.19)(9,3.76)(10,4.44)(11,5.01)(12,6.59)}; % ISSH_multi_col_parallel
+			\addplot coordinates {(1,4.65)(2,4.69)(3,4.63)(4,4.62)(5,4.68)(6,4.33)(7,4.25)(8,4.20)(9,4.20)(10,4.14)(11,4.16)(12,4.22)}; % ISSH_multi_row
+			
+			\legend{Naive, FSH, ISSH, MFSH, DuoHash, DuoHash\_col, DuoHash\_parallel, DuoHash\_row}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for seedset W14L31 (multiple-seed).}
+	\label{fig:speedup-2}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleA, height=12.5cm]
+			\addplot coordinates {(1,5.38)(2,5.57)(3,5.75)(4,5.62)(5,5.96)(6,3.93)(7,3.85)(8,3.82)(9,3.79)(10,3.76)(11,3.73)(12,3.67)}; % naive
+			\addplot coordinates {(1,5.85)(2,6.00)(3,6.14)(4,6.01)(5,6.42)(6,4.53)(7,4.44)(8,4.49)(9,4.50)(10,4.46)(11,4.44)(12,4.40)}; % speedup_previous
+			\addplot coordinates {(1,8.23)(2,8.57)(3,8.82)(4,8.61)(5,9.17)(6,6.07)(7,5.77)(8,5.76)(9,5.75)(10,5.72)(11,5.68)(12,5.61)}; % ISSH_single
+
+			\addplot coordinates {(1,6.01)(2,6.09)(3,6.29)(4,6.14)(5,6.55)(6,4.66)(7,4.49)(8,4.50)(9,4.46)(10,4.22)(11,4.19)(12,4.28)}; % speedup_multi_previous
+			\addplot coordinates {(1,10.35)(2,10.51)(3,10.82)(4,10.56)(5,11.23)(6,7.80)(7,7.57)(8,7.49)(9,7.35)(10,6.44)(11,6.42)(12,6.71)}; % ISSH_multi_v1
+			\addplot coordinates {(1,9.01)(2,9.28)(3,9.59)(4,9.36)(5,9.96)(6,6.66)(7,6.44)(8,6.42)(9,6.35)(10,6.10)(11,6.06)(12,6.17)}; % ISSH_multi_col
+			\addplot coordinates {(1,1.11)(2,1.14)(3,1.18)(4,1.16)(5,1.19)(6,2.24)(7,3.17)(8,4.08)(9,4.99)(10,5.62)(11,6.01)(12,7.79)}; % ISSH_multi_col_parallel
+			\addplot coordinates {(1,8.32)(2,8.46)(3,8.72)(4,8.55)(5,9.05)(6,6.30)(7,6.10)(8,6.04)(9,6.04)(10,5.91)(11,5.91)(12,5.97)}; % ISSH_multi_row
+			
+			\legend{Naive, FSH, ISSH, MFSH, DuoHash, DuoHash\_col, DuoHash\_parallel, DuoHash\_row}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for seedset W18L31 (multiple-seed).}
+	\label{fig:speedup-3}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleA, height=12.5cm]
+			\addplot coordinates {(1,3.18)(2,3.15)(3,3.14)(4,3.15)(5,3.14)(6,2.67)(7,2.58)(8,2.49)(9,2.51)(10,2.52)(11,2.50)(12,2.43)}; % naive
+			\addplot coordinates {(1,3.66)(2,3.59)(3,3.62)(4,3.61)(5,3.61)(6,3.18)(7,3.09)(8,3.03)(9,3.06)(10,3.10)(11,3.08)(12,3.02)}; % speedup_previous
+			\addplot coordinates {(1,5.51)(2,5.53)(3,5.51)(4,5.52)(5,5.52)(6,4.70)(7,4.43)(8,4.33)(9,4.32)(10,4.38)(11,4.33)(12,4.27)}; % ISSH_single
+
+			\addplot coordinates {(1,3.88)(2,3.83)(3,3.84)(4,3.85)(5,3.86)(6,3.36)(7,3.24)(8,3.19)(9,3.18)(10,3.09)(11,3.05)(12,3.10)}; % speedup_multi_previous
+			\addplot coordinates {(1,6.74)(2,6.75)(3,6.75)(4,6.71)(5,6.72)(6,6.08)(7,5.92)(8,5.51)(9,5.57)(10,5.09)(11,5.06)(12,5.25)}; % ISSH_multi_v1
+			\addplot coordinates {(1,5.42)(2,5.46)(3,5.44)(4,5.39)(5,5.43)(6,4.65)(7,4.46)(8,4.29)(9,4.31)(10,4.20)(11,4.20)(12,4.26)}; % ISSH_multi_col
+			\addplot coordinates {(1,0.78)(2,0.78)(3,0.77)(4,0.78)(5,0.77)(6,1.76)(7,2.48)(8,3.03)(9,3.59)(10,4.24)(11,4.45)(12,5.63)}; % ISSH_multi_col_parallel
+			\addplot coordinates {(1,5.26)(2,5.19)(3,5.16)(4,5.18)(5,5.18)(6,4.61)(7,4.43)(8,4.35)(9,4.30)(10,4.31)(11,4.27)(12,4.28)}; % ISSH_multi_row
+			
+			\legend{Naive, FSH, ISSH, MFSH, DuoHash, DuoHash\_col, DuoHash\_parallel, DuoHash\_row}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for seedset W22L31 (multiple-seed).}
+	\label{fig:speedup-4}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleA, height=12.5cm]
+			\addplot coordinates {(1,2.34)(2,2.40)(3,2.42)(4,2.37)(5,2.41)(6,1.57)(7,1.51)(8,1.47)(9,1.47)(10,1.44)(11,1.47)(12,1.42)}; % naive
+			\addplot coordinates {(1,3.50)(2,3.58)(3,3.57)(4,3.50)(5,3.62)(6,2.56)(7,2.46)(8,2.44)(9,2.46)(10,2.42)(11,2.47)(12,2.40)}; % speedup_previous
+			\addplot coordinates {(1,4.70)(2,4.84)(3,4.84)(4,4.75)(5,4.86)(6,3.17)(7,2.99)(8,2.92)(9,2.91)(10,2.86)(11,2.91)(12,2.84)}; % ISSH_single
+
+			\addplot coordinates {(1,3.45)(2,3.54)(3,3.53)(4,3.44)(5,3.55)(6,2.53)(7,2.42)(8,2.38)(9,2.38)(10,2.27)(11,2.31)(12,2.32)}; % speedup_multi_previous
+			\addplot coordinates {(1,5.84)(2,6.01)(3,6.00)(4,5.90)(5,5.96)(6,4.12)(7,3.97)(8,3.84)(9,3.82)(10,3.34)(11,3.40)(12,3.45)}; % ISSH_multi_v1
+			\addplot coordinates {(1,4.98)(2,5.07)(3,5.08)(4,5.02)(5,5.12)(6,3.37)(7,3.24)(8,3.14)(9,3.14)(10,2.96)(11,3.02)(12,3.03)}; % ISSH_multi_col
+			\addplot coordinates {(1,0.66)(2,0.69)(3,0.69)(4,0.69)(5,0.70)(6,1.20)(7,1.68)(8,2.01)(9,2.44)(10,2.72)(11,2.90)(12,3.57)}; % ISSH_multi_col_parallel
+			\addplot coordinates {(1,4.53)(2,4.68)(3,4.64)(4,4.61)(5,4.64)(6,3.13)(7,3.00)(8,2.92)(9,2.90)(10,2.82)(11,2.85)(12,2.86)}; % ISSH_multi_row
+			
+			\legend{Naive, FSH, ISSH, MFSH, DuoHash, DuoHash\_col, DuoHash\_parallel, DuoHash\_row}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for seedset W26L31 (multiple-seed).}
+	\label{fig:speedup-5}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[speedupStyleA, height=12.5cm]
+			\addplot coordinates {(1,2.79)(2,2.77)(3,2.77)(4,2.77)(5,2.80)(6,2.20)(7,2.12)(8,2.13)(9,2.05)(10,2.06)(11,2.05)(12,1.88)}; % naive
+			\addplot coordinates {(1,4.21)(2,4.17)(3,4.17)(4,4.18)(5,4.26)(6,3.60)(7,3.57)(8,3.62)(9,3.57)(10,3.59)(11,3.58)(12,3.57)}; % speedup_previous
+			\addplot coordinates {(1,6.11)(2,6.07)(3,6.05)(4,6.05)(5,6.13)(6,4.92)(7,4.63)(8,4.65)(9,4.53)(10,4.53)(11,4.52)(12,4.51)}; % ISSH_single
+
+			\addplot coordinates {(1,3.98)(2,3.93)(3,3.91)(4,4.00)(5,4.03)(6,3.31)(7,3.23)(8,3.33)(9,3.24)(10,3.13)(11,3.12)(12,3.06)}; % speedup_multi_previous
+			\addplot coordinates {(1,6.65)(2,6.55)(3,6.55)(4,6.56)(5,6.62)(6,5.81)(7,5.65)(8,5.46)(9,5.49)(10,5.00)(11,5.00)(12,5.11)}; % ISSH_multi_v1
+			\addplot coordinates {(1,5.91)(2,5.95)(3,5.94)(4,5.95)(5,6.01)(6,4.89)(7,4.71)(8,4.71)(9,4.55)(10,4.39)(11,4.37)(12,4.44)}; % ISSH_multi_col
+			\addplot coordinates {(1,0.67)(2,0.69)(3,0.69)(4,0.69)(5,0.69)(6,1.78)(7,2.55)(8,3.10)(9,3.63)(10,4.11)(11,4.41)(12,5.44)}; % ISSH_multi_col_parallel
+			\addplot coordinates {(1,5.62)(2,5.54)(3,5.51)(4,5.50)(5,5.61)(6,4.64)(7,4.45)(8,4.49)(9,4.35)(10,4.32)(11,4.32)(12,4.35)}; % ISSH_multi_row
+			
+			\legend{Naive, FSH, ISSH, MFSH, DuoHash, DuoHash\_col, DuoHash\_parallel, DuoHash\_row}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Speed-up graph for seedset W32L45 (multiple-seed).}
+	\label{fig:speedup-6}
+\end{sidewaysfigure}

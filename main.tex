@@ -1,0 +1,63 @@
+%!TEX TS-program = XeLaTeX+ShellEscape
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass[watermark, figures, tables, algorithms, acronyms, acknowledgments]{DEIThesis}
+
+
+
+\mastername{Computer Engineering}
+\title{Improving Spaced k-mer Extraction and Hash Encoding for Bioinformatics Applications}
+
+
+
+\author{Leonardo Gemin}
+\studentId{2023860}
+
+
+
+\advisor{Prof. Matteo Comin}
+\university{University of Padova}
+
+
+
+\coadvisor{}
+\coadvisorsUniversity{}
+
+
+
+\academicYear{2023/2024}
+\thesisDate{July 11}
+\thesisYear{2024}
+
+
+
+\begin{filecontents*}[overwrite]{\jobname.xmpdata}
+    \Title{Improving Spaced k-mer Extraction and Hash Encoding for Bioinformatics Applications}
+    \Author{Leonardo Gemin}
+    \Subject{Master Thesis in Computer Engineering}
+    \Language{en-EN}
+    \Keywords{computer engineering\sep bioinformatics\sep spaced k-mer\sep spaced seed\sep hash encoding}
+\end{filecontents*}
+
+
+
+\begin{document}
+	\frontmatter
+	
+	\mainmatter
+		\import{chapters/01_introduction}{0}
+		\import{chapters/02_spacedkmer}{0}
+		\import{chapters/03_hashing}{0}
+		\import{chapters/04_develop}{0}
+		\import{chapters/05_results}{0}
+		\import{chapters/06_conclusions}{0}
+	
+	\appendix
+		\import{chapters/appendix}{a_seedsets}
+		\import{chapters/appendix}{b_time-tables}
+		\import{chapters/appendix}{c_speedup-tables}
+		\import{chapters/appendix}{d_speedup-graphs}
+		\import{chapters/appendix}{e_DuoHash-vs-MaskJelly}
+	
+	\backmatter
+\end{document}

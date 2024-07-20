@@ -1,0 +1,160 @@
+\section{Analysis of the time performances}
+\label{sec:performances}
+
+In this chapter, we present a detailed analysis of the time performance of the new tool DuoHash compared to the existing tool ntHash2. The various tests conducted were aimed at evaluating the efficiency and speed of DuoHash in comparison to ntHash2. The results are presented in terms of speed-up, which is calculated using the formula: \[ \text{speed-up} = \frac{\text{reference time}}{\text{time to be evaluated}} \] where “reference time" refers to the time taken by ntHash2 and “time to be evaluated" refers to the time taken by DuoHash.
+
+To ensure the accuracy of the results, each configuration was tested 10 times, and the average of these values was taken. This repetition helps to mitigate any anomalies or inconsistencies that may arise during individual test runs. For greater precision, the times were measured in microseconds and subsequently converted to milliseconds.
+
+Additionally, to objectively evaluate the two tools, the test scripts were optimized and compiled using the \verb|-O3| optimization option of the \verb|GNU| compiler. This ensures that both tools are operating at their highest potential performance during the tests.
+
+The detailed results of these performance evaluations are presented in this chapter and further elaborated upon in the appendix.
+
+
+
+
+	\subsection{General analysis}
+	\label{subsec:general-analysis}
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleA, width=0.65\textwidth]
+				\addplot coordinates {(1,2.41)(2,2.37)(3,2.42)(4,2.40)(5,2.34)(6,1.57)(7,1.51)(8,1.47)(9,1.47)(10,1.44)(11,1.47)(12,1.42)}; % naive
+				\addplot coordinates {(1,4.86)(2,4.75)(3,4.84)(4,4.84)(5,4.70)(6,3.17)(7,2.99)(8,2.92)(9,2.91)(10,2.86)(11,2.91)(12,2.84)}; % ISSH_single
+				
+				\addplot coordinates {(1,5.96)(2,5.90)(3,6.00)(4,6.01)(5,5.84)(6,4.12)(7,3.97)(8,3.84)(9,3.82)(10,3.34)(11,3.40)(12,3.45)}; % ISSH_multi_v1
+				\addplot coordinates {(1,0.70)(2,0.69)(3,0.69)(4,0.69)(5,0.66)(6,1.20)(7,1.68)(8,2.01)(9,2.44)(10,2.72)(11,2.90)(12,3.57)}; % ISSH_multi_col_parallel
+				
+				\legend{Naive, ISSH, DuoHash, DuoHash\_parallel}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for seedset W26L31}
+		\label{fig:speedup-small-W26L31}
+	\end{figure}
+	
+	The speed-up achieved by DuoHash tends to remain constant, or decrease slightly, in the various methods presented when the seedset is set, regardless of the dataset being processed. This trend is particularly evident for datasets in the “L" group, where the speed-up is highest. For the “L" group datasets -~characterised by reads of varying number, but constant length~- the method demonstrates a constant and significant speed-up in all scenarios tested. This indicates that the software scales efficiently with the data volume when the length of the reads remains unchanged.
+	
+	For datasets in the “R" group that maintain a constant number of reads, but vary in length~- the speed-up shows greater variability. In this group, the speed-up generally tends to decrease slightly as the length of the reads increases. Despite this, the overall performance of the instrument remains robust, demonstrating its ability to effectively handle different lengths of reads.
+	
+	Analysing the results, it clearly emerges that the \verb|DuoHash| method prevails over all other methods in almost all situations, with a speed-up between $3.34\times$ and $11.23\times$. This dominance is evident in both the “L" and “R" group datasets, with the exception of one specific case: in the “R5000" dataset, the \verb|DuoHash_parallel| method outperforms \verb|DuoHash| in terms of performance, arriving at a speed-up of $9.05\times$ in the L5000000 dataset. This outstanding result requires further analysis. 
+	
+	The \verb|DuoHash_parallel| method deserves a separate discussion due to its unique performance characteristics. This method shows its true potential with longer readings. Speed-up becomes particularly advantageous when the length of reads reaches and exceeds 5,000bp. This significant performance improvement highlights the method's ability to efficiently handle large, complex data sets with long reads. The parallelisation strategy employed by \verb|DuoHash_parallel| allows it to process such data sets more efficiently, making it an ideal choice for scenarios involving long genomic sequences.
+	
+	
+
+
+	\subsection{Performance Evaluation with Varying Seed Weight}
+	\label{subsec:performance-varying-seed-weight}
+	
+	The weight of a spaced seed is a critical factor that can influence the sensitivity and specificity of the software. To assess the impact of the weight of the spaced seed, four seed sets with a fixed length of 31 and different weights were used: W14L31, W18L31, W22L31 and W26L31. 
+	
+	
+	For the “L" group datasets, the speed-up shows fluctuations without a definite pattern. In general, there is a slight decrease in speed-up as the seed weight increases. However, there are significant upward deviations for seedset W18L31, indicating that this particular seedset performs exceptionally well under certain conditions. Figure~\ref{fig:speedup-MISSH_v1-varying-weight-L} graphically depicts the speed-up variations for the \verb|DuoHash| method across the seedsets and datasets considered in this section. The highest speed-up achieved by this dataset was $11.23\times$ with seedset W18L31.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleB, width=0.65\textwidth]
+				\addplot coordinates {(1,6.84)(2,10.35)(3,6.74)(4,5.84)};
+				\addplot coordinates {(1,6.74)(2,10.51)(3,6.75)(4,6.01)};
+				\addplot coordinates {(1,6.72)(2,10.82)(3,6.75)(4,6.00)};
+				\addplot coordinates {(1,6.83)(2,10.56)(3,6.71)(4,5.90)};
+				\addplot coordinates {(1,6.72)(2,11.23)(3,6.72)(4,5.96)};
+				
+				\legend{L500000, L1000000, L1500000, L2000000, L5000000}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for method \texttt{DuoHash} among seedset with varying weight and dataset of “L" group.}
+		\label{fig:speedup-MISSH_v1-varying-weight-L}
+	\end{figure}
+	
+	
+	For the datasets in the “R" group, speed-up follows a similar trend to that observed in the “L" group. The general trend is a decrease in speed-up with increasing seed weight. However, the upward deviations observed for seedset W18L31 in the “L" group datasets are much less pronounced in the “R" group datasets. This suggests that, although the seedset W18L31 continues to perform well, its relative advantage is reduced when it comes to variable read lengths. Figure~\ref{fig:speedup-MISSH_v1-varying-weight-R} graphically depicts the speed-up variations for the \verb|DuoHash| method across the seedsets and datasets considered in this section. The maximum speed-up achieved for the “L" group datasets was $10.35\times$ with seedset W18L31.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleB, width=0.65\textwidth]
+				\addplot coordinates {(1,6.84)(2,10.35)(3,6.74)(4,5.84)};
+				\addplot coordinates {(1,6.36)(2,7.80)(3,6.08)(4,4.12)};
+				\addplot coordinates {(1,6.20)(2,7.57)(3,5.92)(4,3.97)};
+				\addplot coordinates {(1,5.83)(2,7.49)(3,5.51)(4,3.84)};
+				\addplot coordinates {(1,5.66)(2,7.35)(3,5.57)(4,3.82)};
+				\addplot coordinates {(1,5.35)(2,6.44)(3,5.09)(4,3.34)};
+				\addplot coordinates {(1,5.33)(2,6.42)(3,5.06)(4,3.40)};
+				\addplot coordinates {(1,5.61)(2,6.71)(3,5.25)(4,3.45)};
+				
+				\legend{R80, R200, R350, R500, R1000, R1500, R2000, R5000}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for method \texttt{DuoHash} among seedset with varying weight and dataset of “R" group.}
+		\label{fig:speedup-MISSH_v1-varying-weight-R}
+	\end{figure}
+
+
+
+
+	\subsection{Performance Evaluation with Varying Seed Length}
+	\label{subsec:performance-varying-seed-length}
+	
+	The length of the spaced seed is another crucial parameter that can influence software performance. To assess the impact of spaced seed length, seedsets with different lengths and fixed weights were used: W10L15, W22L31 and W32L45. As there are only three seedsets, a variation in one of them can significantly influence the overall trend. Although the pattern of behaviour is clear and consistent in all the cases analysed (see Figure~\ref{fig:speedup-MISSH_v1-varying-length}), we cannot speak of a well-defined trend. This figure clearly shows the “step" pattern with seedset W10L15 showing lower speed-up values than seedsets W22L31 and W32L45, which tend to stabilise at higher values.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleC, width=0.65\textwidth]
+				\addplot coordinates {(1,5.27)(2,6.72)(3,6.62)};
+				\addplot coordinates {(1,5.29)(2,6.71)(3,6.56)};
+				\addplot coordinates {(1,5.30)(2,6.75)(3,6.55)};
+				\addplot coordinates {(1,5.40)(2,6.75)(3,6.55)};
+				\addplot coordinates {(1,5.29)(2,6.74)(3,6.65)};
+				
+				\addplot coordinates {(1,4.95)(2,6.08)(3,5.81)};
+				\addplot coordinates {(1,4.78)(2,5.92)(3,5.65)};
+				\addplot coordinates {(1,4.59)(2,5.51)(3,5.46)};
+				\addplot coordinates {(1,4.61)(2,5.57)(3,5.49)};
+				\addplot coordinates {(1,3.88)(2,5.09)(3,5.00)};
+				\addplot coordinates {(1,3.91)(2,5.06)(3,5.00)};
+				\addplot coordinates {(1,4.06)(2,5.25)(3,5.11)};
+				
+				\legend{L5000000, L2000000, L1500000, L1000000, L500000, R200, R350, R500, R1000, R1500, R2000, R5000}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up graph for method \texttt{DuoHash} among seedset with varying length and dataset of both “L" and “R" groups.}
+		\label{fig:speedup-MISSH_v1-varying-length}
+	\end{figure}
+	
+	
+	For the L-group datasets, a “stepped" pattern is observed in the speed-up, with the first value (W10L15) being reduced by approximately 20 per cent compared to the next two values (W22L31 and W32L45), which tend to remain constant. This behaviour might suggest that, beyond a certain seed length, the efficiency of the tool remains stable. The maximum speed-up achieved for the L-group datasets was $6.75\times$ with seedset W22L31.
+	
+	For the R-group datasets, the speed-up also shows a similar “step" pattern. The initial value (W10L15) is about 20 per cent lower than the other two seedsets (W22L31 and W32L45), which maintain constant values. For this group of datasets, a maximum speed-up of $6.08\times$ was achieved with seedset W22L31.
+
+
+
+
+	\subsection{Performance Comparison: Multiple-Seed vs. Single-Seed}
+	\label{subsec:performance-comparison-multi-vs-single-seed}
+	
+	To confirm the validity of the multiple-seed version of the software, the performance between the best method for single-seed mode and the best method for multiple-seed mode was compared. This comparison is crucial to determine whether the multiple-seed implementation offers a significant advantage over the single-seed version. The following were chosen:
+	\begin{itemize}
+		\item the \verb|ISSH| method for the single-seed mode;
+		\item the \verb|DuoHash| method for the multi-seeded mode;
+	\end{itemize}
+	
+	%Both versions were tested using all seedsets and datasets presented above to ensure a complete performance evaluation.
+	
+	\begin{figure}[!ht]
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[speedupStyleD, width=0.65\textwidth]
+				\addplot coordinates {(1,4.63)(2,6.39)(3,9.35)(4,5.88)(5,5.88)(6,5.93)};
+				\addplot coordinates {(1,5.40)(2,6.74)(3,10.51)(4,6.75)(5,6.01)(6,6.55)};
+				
+				\legend{ISSH, DuoHash}
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Speed-up comparison between single-seed and multiple-seed versions (L1000000 dataset).}
+		\label{fig:single-vs-multi-seed}
+	\end{figure}
+	
+	The results represented in Figure~\ref{fig:single-vs-multi-seed} show that the speed-up of the two versions, even if restricted to the L1000000 dataset only, does not differ substantially, but the multiple-seed version prevails in terms of overall performance.

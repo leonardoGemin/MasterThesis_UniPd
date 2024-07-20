@@ -1,0 +1,16 @@
+\chapter{Introduction}
+\label{chp:introduction}
+
+La bioinformatica ha rivoluzionato il modo in cui comprendiamo e analizziamo le sequenze biologiche, aprendo nuove frontiere nella ricerca scientifica e nelle applicazioni pratiche. Una delle principali sfide in questo campo è la classificazione delle sequenze, un compito cruciale con numerose applicazioni, che spaziano dalla ricostruzione filogenetica alla classificazione delle proteine, dalla mappatura delle letture metagenomiche alla progettazione di oligonucleotidi.
+
+Una metodologia ampiamente utilizzata per la classificazione delle sequenze è basata sull'allineamento, che però presenta limiti significativi nella gestione dei grandi dataset prodotti dalle moderne tecnologie di sequenziamento. Per risolvere questo problema, sono state sviluppate tecniche senza allineamento, che si basano sulla decomposizione delle sequenze in $k$-mer consecutivi e sulla loro indicizzazione tramite strutture dati efficienti. Questo approccio ha notevolmente accelerato i tempi di elaborazione, ma ha anche comportato una perdita di sensibilità a causa della necessità di corrispondenze esatte in tutte le posizioni dei $k$-mer.
+
+Per superare questa limitazione, sono state proposte varianti delle corrispondenze esatte dei “k"-mer, come l'uso di corrispondenze più lunghe con errori o la possibilità di corrispondenze non consecutive all'interno dei $k$-mer stessi. Un'innovazione significativa in questo contesto è stata l'introduzione degli “spaced seed", pattern di lunghezza fissa che consentono caratteri jolly in posizioni predeterminate. Questi seed hanno dimostrato di migliorare notevolmente la capacità di trovare similitudini rilevanti, permettendo l'applicazione di algoritmi più efficienti in diversi ambiti della bioinformatica.
+
+Tuttavia, l'utilizzo dei seed spaziati comporta un rallentamento significativo nei tempi di esecuzione rispetto alle soluzioni basate sui $k$-mer, a causa della maggiore complessità nell'indicizzazione e nell'hashing delle sequenze. Questo problema ha stimolato la ricerca di nuovi approcci per ottimizzare l'hashing dei seed spaziati, con l'obiettivo di migliorare le prestazioni senza compromettere la sensibilità.
+
+Nel contesto di questa tesi, esploreremo i recenti sviluppi nell'ottimizzazione dell'hashing dei seed spaziati e valuteremo le potenziali applicazioni di tali approcci in contesti specifici, come la classificazione metagenomica delle letture. Attraverso l'analisi critica delle metodologie esistenti e lo sviluppo di nuove soluzioni, ci proponiamo di contribuire alla continua evoluzione della bioinformatica e alla sua crescente importanza nel campo delle scienze biologiche.
+
+
+\subimport{}{01_purpose}
+\subimport{}{02_organization}

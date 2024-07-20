@@ -1,0 +1,570 @@
+@article{girotto2018fsh,
+	author = {Girotto, Samuele and Comin, Matteo and Pizzi, Cinzia},
+	title = {FSH: fast spaced seed hashing exploiting adjacent hashes},
+	journal = {Algorithms for Molecular Biology},
+	volume = {13},
+	number = {1},
+	pages = {8},
+	year = {2018},
+	month = {03},
+	day = {22},
+	abstract = {Patterns with wildcards in specified positions, namely spaced seeds, are increasingly used instead of k-mers in many bioinformatics applications that require indexing, querying and rapid similarity search, as they can provide better sensitivity. Many of these applications require to compute the hashing of each position in the input sequences with respect to the given spaced seed, or to multiple spaced seeds. While the hashing of k-mers can be rapidly computed by exploiting the large overlap between consecutive k-mers, spaced seeds hashing is usually computed from scratch for each position in the input sequence, thus resulting in slower processing.},
+	issn = {1748-7188},
+	doi = {10.1186/s13015-018-0125-4},
+	url = {https://doi.org/10.1186/s13015-018-0125-4}
+}
+
+@article{petrucci2020issh,
+	author = {Petrucci, Enrico and Noé, Laurent and Pizzi, Cinzia and Comin, Matteo},
+	title = {Iterative Spaced Seed Hashing: Closing the Gap Between Spaced Seed Hashing and k-mer Hashing},
+	journal = {Journal of Computational Biology},
+	volume = {27},
+	number = {2},
+	pages = {223-233},
+	year = {2020},
+	abstract = {Alignment-free classification of sequences has enabled high-throughput processing of sequencing data in many bioinformatics pipelines. Much work has been done to speed up the indexing of k-mers through hash-table and other data structures. These efforts have led to very fast indexes, but because they are k-mer based, they often lack sensitivity due to sequencing errors or polymorphisms. Spaced seeds are a special type of pattern that accounts for errors or mutations. They allow to improve the sensitivity and they are now routinely used instead of k-mers in many applications. The major drawback of spaced seeds is that they cannot be efficiently hashed and thus their usage increases substantially the computational time. In this article we address the problem of efficient spaced seed hashing. We propose an iterative algorithm that combines multiple spaced seed hashes by exploiting the similarity of adjacent hash values to efficiently compute the next hash. We report a series of experiments on HTS reads hashing, with several spaced seeds. Our algorithm can compute the hashing values of spaced seeds with a speedup in range of [3.5 × -7 × ], outperforming previous methods. Software and data sets are available at Iterative Spaced Seed Hashing.},
+	doi = {10.1089/cmb.2019.0298},
+	note = {PMID: 31800307},
+	URL = {https://doi.org/10.1089/cmb.2019.0298},
+	eprint = {https://doi.org/10.1089/cmb.2019.0298}
+}
+
+@conference{mian2023missh,
+	author = {Mian, Eleonora and Petrucci, Enrico and Pizzi, Cinzia and Comin, Matteo},
+	title = {Efficient Hashing of Multiple Spaced Seeds with Application},
+	booktitle = {Proceedings of the 16th International Joint Conference on Biomedical Engineering Systems and Technologies (BIOSTEC 2023) - BIOINFORMATICS},
+	year = {2023},
+	pages = {155-162},
+	publisher = {SciTePress},
+	organization = {INSTICC},
+	doi = {10.5220/0011632900003414},
+	isbn = {978-989-758-631-6},
+	issn = {2184-4305},
+}
+
+@article{mohamadi2016ntHash,
+	author = {Mohamadi, Hamid and Chu, Justin and Vandervalk, Benjamin P and Birol, Inanc},
+	title = {ntHash: recursive nucleotide hashing},
+	journal = {Bioinformatics},
+	volume = {32},
+	number = {22},
+	pages = {3492-3494},
+	year = {2016},
+	month = {07},
+	day = {16},
+	abstract = {Motivation: Analysis of organism-specific interactomes has yielded novel insights into cellular function and coordination, understanding of pathology, and identification of markers and drug targets. Genes, however, can exhibit varying levels of cell type specificity in their expression, and their coordinated expression manifests in tissue-specific function and pathology. Tissue-specific/tissue-selective interaction mechanisms have significant applications in drug discovery, as they are more likely to reveal drug targets. Furthermore, tissue-specific transcription factors (tsTFs) are significantly implicated in human disease, including cancers. Finally, disease genes and protein complexes have the tendency to be differentially expressed in tissues in which defects cause pathology. These observations motivate the construction of refined tissue-specific interactomes from organism-specific interactomes.Results: We present a novel technique for constructing human tissue-specific interactomes. Using a variety of validation tests (Edge Set Enrichment Analysis, Gene Ontology Enrichment, Disease-Gene Subnetwork Compactness), we show that our proposed approach significantly outperforms state-of-the-art techniques. Finally, using case studies of Alzheimer’s and Parkinson’s diseases, we show that tissue-specific interactomes derived from our study can be used to construct pathways implicated in pathology and demonstrate the use of these pathways in identifying novel targets.Availability and implementation:  http://www.cs.purdue.edu/homes/mohammas/projects/ActPro.htmlContact:  mohammadi@purdue.edu},
+	issn = {1367-4803},
+	doi = {10.1093/bioinformatics/btw245},
+	url = {https://doi.org/10.1093/bioinformatics/btw245},
+	eprint = {https://academic.oup.com/bioinformatics/article-pdf/32/12/i243/49020222/bioinformatics_32_12_i243.pdf},
+}
+
+@article{kazemi2022ntHash2,
+	author = {Kazemi, Parham and Wong, Johnathan and Nikolić, Vladimir and Mohamadi, Hamid and Warren, René L and Birol, Inanç},
+	title = {ntHash2: recursive spaced seed hashing for nucleotide sequences},
+	journal = {Bioinformatics},
+	volume = {38},
+	number = {20},
+	pages = {4812-4813},
+	year = {2022},
+	month = {08},
+	day = {24},
+	abstract = {Spaced seeds are robust alternatives to k-mers in analyzing nucleotide sequences with high base mismatch rates. Hashing is also crucial for efficiently storing abundant sequence data. Here, we introduce ntHash2, a fast algorithm for spaced seed hashing that can be integrated into various bioinformatics tools for efficient sequence analysis with applications in genome research.ntHash2 is up to 2.1× faster at hashing various spaced seeds than the previous version and 3.8× faster than conventional hashing algorithms with naïve adaptation. Additionally, we reduced the collision rate of ntHash for longer k-mer lengths and improved the uniformity of the hash distribution by modifying the canonical hashing mechanism.ntHash2 is freely available online at github.com/bcgsc/ntHash under an MIT license.Supplementary data are available at Bioinformatics online.},
+	issn = {1367-4803},
+	doi = {10.1093/bioinformatics/btac564},
+	url = {https://doi.org/10.1093/bioinformatics/btac564},
+	eprint = {https://academic.oup.com/bioinformatics/article-pdf/38/20/4812/46535020/btac564.pdf},
+}
+
+@article{bin2002patternhunter,
+	author = {Ma, Bin and Tromp, John and Li, Ming},
+	title = {PatternHunter: faster and more sensitive homology search},
+	journal = {Bioinformatics},
+	volume = {18},
+	number = {3},
+	pages = {440-445},
+	year = {2002},
+	month = {03},
+	abstract = {Motivation: Genomics and proteomics studies routinely depend on homology searches based on the strategy of finding short seed matches which are then extended. The exploding genomic data growth presents a dilemma for DNA homology search techniques: increasing seed size decreases sensitivity whereas decreasing seed size slows down computation.Results: We present a new homology search algorithm ‘PatternHunter’ that uses a novel seed model for increased sensitivity and new hit-processing techniques for significantly increased speed. At Blast levels of sensitivity, PatternHunter is able to find homologies between sequences as large as human chromosomes, in mere hours on a desktop.Availability: PatternHunter is available at http://www.bioinformaticssolutions.com, as a commercial package. It runs on all platforms that support Java. PatternHunter technology is being patented; commercial use requires a license from BSI, while non-commercial use will be free.Contact: mli@cs.ucsb.edu},
+	issn = {1367-4803},
+	doi = {10.1093/bioinformatics/18.3.440},
+	url = {https://doi.org/10.1093/bioinformatics/18.3.440},
+	eprint = {https://academic.oup.com/bioinformatics/article-pdf/18/3/440/48850317/bioinformatics_18_3_440.pdf},
+}
+
+@article{li2004patternhunter,
+	title = {PatternHunter II: highly sensitive and fast homology search},
+	author = {Li, Ming and Ma, Bin and Kisman, Daniel and Tromp, John},
+	journal = {Journal of Bioinformatics and Computational Biology},
+	volume = {2},
+	number = {03},
+	pages = {417--439},
+	year = {2004},
+	publisher = {World Scientific}
+}
+
+@article{marcais2011jellyfish,
+	author = {Marçais, Guillaume and Kingsford, Carl},
+	title = {A fast, lock-free approach for efficient parallel counting of occurrences of k-mers},
+	journal = {Bioinformatics},
+	volume = {27},
+	number = {6},
+	pages = {764-770},
+	year = {2011},
+	month = {01},
+	abstract = {Motivation: Counting the number of occurrences of every k-mer (substring of length k) in a long string is a central subproblem in many applications, including genome assembly, error correction of sequencing reads, fast multiple sequence alignment and repeat detection. Recently, the deep sequence coverage generated by next-generation sequencing technologies has caused the amount of sequence to be processed during a genome project to grow rapidly, and has rendered current k-mer counting tools too slow and memory intensive. At the same time, large multicore computers have become commonplace in research facilities allowing for a new parallel computational paradigm.Results: We propose a new k-mer counting algorithm and associated implementation, called Jellyfish, which is fast and memory efficient. It is based on a multithreaded, lock-free hash table optimized for counting k-mers up to 31 bases in length. Due to their flexibility, suffix arrays have been the data structure of choice for solving many string problems. For the task of k-mer counting, important in many biological applications, Jellyfish offers a much faster and more memory-efficient solution.Availability: The Jellyfish software is written in C++ and is GPL licensed. It is available for download at http://www.cbcb.umd.edu/software/jellyfish.Contact:  gmarcais@umd.eduSupplementary information:  Supplementary data are available at Bioinformatics online.},
+	issn = {1367-4803},
+	doi = {10.1093/bioinformatics/btr011},
+	url = {https://doi.org/10.1093/bioinformatics/btr011},
+	eprint = {https://academic.oup.com/bioinformatics/article-pdf/27/6/764/48866141/bioinformatics_27_6_764.pdf},
+}
+
+@misc{openstax2016microbiology,
+	author = {OpenStax Microbiology},
+	title = {Microbiology ID: e42bd376-624b-4c0f-972f-e0c57998e765@4.4},
+	year = {2016},
+	month = {11},
+	day = {11},
+	url = {https://commons.wikimedia.org/wiki/File:OSC_Microbio_10_02_DoubHelix.jpg},
+	note = {Creative Commons Attribution License (by 4.0)},
+	publisher = {OpenStax Microbiology},
+	version = {4.4},
+}
+
+@online{nhgri2023cost,
+	author = {National Human Genome Research Institute},
+	title = {The Cost of Sequencing a Human Genome},
+	year = {2023},
+	url = {https://www.genome.gov/about-genomics/fact-sheets/Sequencing-Human-Genome-cost},
+	note = {Accessed: 2024-05-24},
+}
+
+@article{sanger1977dna,
+	author = {Sanger, Frederick and Nicklen, Steven and Coulson, Alan R.},
+	title = {DNA sequencing with chain-terminating inhibitors},
+	journal = {Proceedings of the National Academy of Sciences of the United States of America},
+	volume = {74},
+	number = {12},
+	pages = {5463--5467},
+	year = {1977},
+	month = {12},
+	doi = {10.1073/pnas.74.12.5463},
+	pmid = {271968},
+	pmcid = {PMC431765},
+	url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC431765/},
+	eprint = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC431765/pdf/pnas00043-0271.pdf}
+}
+
+@Article{shendure2008nextgeneration,
+	author = {Shendure, Jay and Ji, Hanlee},
+	title = {Next-generation DNA sequencing},
+	journal = {Nature Biotechnology},
+	year = {2008},
+	month = {10},
+	day = {01},
+	volume = {26},
+	number = {10},
+	pages = {1135-1145},
+	abstract = {DNA sequence represents a single format onto which a broad range of biological phenomena can be projected for high-throughput data collection. Over the past three years, massively parallel DNA sequencing platforms have become widely available, reducing the cost of DNA sequencing by over two orders of magnitude, and democratizing the field by putting the sequencing capacity of a major genome center in the hands of individual investigators. These new technologies are rapidly evolving, and near-term challenges include the development of robust protocols for generating sequencing libraries, building effective new approaches to data-analysis, and often a rethinking of experimental design. Next-generation DNA sequencing has the potential to dramatically accelerate biological and biomedical research, by enabling the comprehensive analysis of genomes, transcriptomes and interactomes to become inexpensive, routine and widespread, rather than requiring significant production-scale efforts.},
+	issn = {1546-1696},
+	doi = {10.1038/nbt1486},
+	url = {https://doi.org/10.1038/nbt1486},
+}
+
+@article{satam2023nextgeneration,
+	author = {Satam, Hetal and Joshi, Kavita and Mangrolia, Umang and Waghoo, Shraddha and Zaidi, Gulzar and Rawool, Shwetali and Thakare, Rahul P. and Banday, Suhail and Mishra, Ashutosh K. and Das, Gautam and Malonia, Sandeep K.},
+	title = {Next-Generation Sequencing Technology: Current Trends and Advancements},
+	journal = {Biology (Basel)},
+	volume = {12},
+	number = {7},
+	pages = {997},
+	year = {2023},
+	month = {07},
+	doi = {https://doi.org/10.3390/biology12070997},
+	pmid = {37508427},
+	pmcid = {PMC10376292},
+	note = {Erratum in: Biology (Basel). 2024 Apr 24;13(5):},
+}
+
+@article{zerbino2008velvet,
+	author = {Zerbino, Daniel R. and Birney, Ewan},
+	title = {Velvet: algorithms for de novo short read assembly using de Bruijn graphs},
+	journal = {Genome Research},
+	year = {2008},
+	month = {05},
+	volume = {18},
+	number = {5},
+	pages = {821--829},
+	doi = {10.1101/gr.074492.107},
+	eprint = {18349386},
+	eprinttype= {pmid},
+	note = {Epub 2008 Mar 18. PMCID: PMC2336801}
+}
+
+@article{bankevich2012spades,
+	author = {Bankevich, Anton and Nurk, Sergey and Antipov, Dmitry and Gurevich, Alexey A. and Dvorkin, Mikhail and Kulikov, Alexander S. and Lesin, Valery M. and Nikolenko, Sergey I. and Pham, Son and Prjibelski, Andrey D. and Pyshkin, Alexey V. and Sirotkin, Alexander V. and Vyahhi, Nikolay and Tesler, Glenn and Alekseyev, Max A. and Pevzner, Pavel A.},
+	title = {SPAdes: A New Genome Assembly Algorithm and Its Applications to Single-Cell Sequencing},
+	journal = {Journal of Computational Biology},
+	volume = {19},
+	number = {5},
+	pages = {455-477},
+	year = {2012},
+	doi = {10.1089/cmb.2012.0021},
+	note = {PMID: 22506599},
+	url = {https://doi.org/10.1089/cmb.2012.0021},
+	eprint = {https://doi.org/10.1089/cmb.2012.0021},
+	abstract = {Abstract The lion's share of bacteria in various environments cannot be cloned in the laboratory and thus cannot be sequenced using existing technologies. A major goal of single-cell genomics is to complement gene-centric metagenomic data with whole-genome assemblies of uncultivated organisms. Assembly of single-cell data is challenging because of highly non-uniform read coverage as well as elevated levels of sequencing errors and chimeric reads. We describe SPAdes, a new assembler for both single-cell and standard (multicell) assembly, and demonstrate that it improves on the recently released E+V−SC assembler (specialized for single-cell data) and on popular assemblers Velvet and SoapDeNovo (for multicell data). SPAdes generates single-cell assemblies, providing information about genomes of uncultivatable bacteria that vastly exceeds what may be obtained via traditional metagenomics studies. SPAdes is available online (http://bioinf.spbau.ru/spades). It is distributed as open source software.}
+}
+
+@Article{wood2014kraken,
+	author = {Wood, Derrick E. and Salzberg, Steven L.},
+	title = {Kraken: ultrafast metagenomic sequence classification using exact alignments},
+	journal = {Genome Biology},
+	year = {2014},
+	month = {03},
+	day = {03},
+	volume = {15},
+	number = {3},
+	pages = {R46},
+	abstract = {Kraken is an ultrafast and highly accurate program for assigning taxonomic labels to metagenomic DNA sequences. Previous programs designed for this task have been relatively slow and computationally expensive, forcing researchers to use faster abundance estimation programs, which only classify small subsets of metagenomic data. Using exact alignment of k-mers, Kraken achieves classification accuracy comparable to the fastest BLAST program. In its fastest mode, Kraken classifies 100 base pair reads at a rate of over 4.1 million reads per minute, 909 times faster than Megablast and 11 times faster than the abundance estimation program MetaPhlAn. Kraken is available at http://ccb.jhu.edu/software/kraken/.},
+	issn = {1474-760X},
+	doi = {10.1186/gb-2014-15-3-r46},
+	url = {https://doi.org/10.1186/gb-2014-15-3-r46}
+}
+
+@Article{ondov2016mash,
+	author = {Ondov, Brian D. and Treangen, Todd J. and Melsted, P{\'a}ll and Mallonee, Adam B. and Bergman, Nicholas H. and Koren, Sergey and Phillippy, Adam M.},
+	title = {Mash: fast genome and metagenome distance estimation using MinHash},
+	journal = {Genome Biology},
+	year = {2016},
+	month = {06},
+	day = {20},
+	volume = {17},
+	number = {1},
+	pages = {132},
+	abstract = {Mash extends the MinHash dimensionality-reduction technique to include a pairwise mutation distance and P value significance test, enabling the efficient clustering and search of massive sequence collections. Mash reduces large sequences and sequence sets to small, representative sketches, from which global mutation distances can be rapidly estimated. We demonstrate several use cases, including the clustering of all 54,118 NCBI RefSeq genomes in 33 CPU h; real-time database search using assembled or unassembled Illumina, Pacific Biosciences, and Oxford Nanopore data; and the scalable clustering of hundreds of metagenomic samples by composition. Mash is freely released under a BSD license (https://github.com/marbl/mash).},
+	issn = {1474-760X},
+	doi = {10.1186/s13059-016-0997-x},
+	url = {https://doi.org/10.1186/s13059-016-0997-x}
+}
+
+@article{miller2010assembly,
+	author = {Miller, James R. and Koren, Sergey and Sutton, Granger},
+	title = {Assembly algorithms for next-generation sequencing data},
+	journal = {Genomics},
+	year = {2010},
+	month = {06},
+	volume = {95},
+	number = {6},
+	pages = {315--327},
+	doi = {10.1016/j.ygeno.2010.03.001},
+	eprint = {20211242},
+	eprinttype= {pmid},
+	note = {Epub 2010 Mar 6. PMCID: PMC2874646}
+}
+
+@article{nagarajan2013sequence,
+	title = {Sequence assembly demystified},
+	author = {Nagarajan, Niranjan and Pop, Mihai},
+	journal = {Nature Reviews Genetics},
+	volume = {14},
+	number = {3},
+	pages = {157--167},
+	year = {2013},
+	publisher = {Nature Publishing Group},
+	doi = {10.1038/nrg3367}
+}
+
+@article{conesa2016survey,
+	title = {A survey of best practices for RNA-seq data analysis},
+	author = {Conesa, Ana and Madrigal, Paula and Tarazona, Sonia and Gomez-Cabrero, David and Cervera, Amelia and McPherson, Andrew and Szcześniak, Mateusz W and Gaffney, Daniel J and Elo, Laura L and Zhang, Xuegong and Mortazavi, Ali},
+	journal = {Genome Biology},
+	volume = {17},
+	number = {1},
+	pages = {13},
+	year = {2016},
+	publisher = {BioMed Central},
+	doi = {10.1186/s13059-016-0881-8}
+}
+
+@article{frazer2004vista,
+	title = {VISTA: computational tools for comparative genomics},
+	author = {Frazer, Kelly A and Pachter, Lior and Poliakov, Alexander and Rubin, Edward M and Dubchak, Inna},
+	journal = {Nucleic Acids Research},
+	volume = {32},
+	number = {suppl\_2},
+	pages = {W273--W279},
+	year = {2004},
+	publisher = {Oxford University Press},
+	doi = {10.1093/nar/gkh458}
+}
+
+@article{compeau2011how,
+	title = {How to apply de Bruijn graphs to genome assembly},
+	author = {Compeau, Phillip E. and Pevzner, Pavel A. and Tesler, Glenn},
+	journal = {Nature Biotechnology},
+	volume = {29},
+	number = {11},
+	pages = {987--991},
+	year = {2011},
+	publisher = {Nature Publishing Group},
+	doi = {10.1038/nbt.2023}
+}
+
+@article{li2009fast,
+	title = {Fast and accurate short read alignment with Burrows-Wheeler transform},
+	author = {Li, Heng and Durbin, Richard},
+	journal = {Bioinformatics},
+	volume = {25},
+	number = {14},
+	pages = {1754--1760},
+	year = {2009},
+	publisher = {Oxford University Press},
+	doi = {10.1093/bioinformatics/btp324}
+}
+
+@article{chikhi2014informed,
+	title = {Informed and automated $k$-mer size selection for genome assembly},
+	author = {Chikhi, Rayan and Medvedev, Paul},
+	journal = {Bioinformatics},
+	volume = {30},
+	number = {1},
+	pages = {31--37},
+	year = {2014},
+	publisher = {Oxford University Press},
+	doi = {10.1093/bioinformatics/btt310}
+}
+
+@article{li2017efficient,
+	title = {Efficient $k$-mer counting using a bloom filter and de Bruijn graph},
+	author = {Li, Yandong and Zhang, Yi and Xu, Dong},
+	journal = {Journal of Computational Biology},
+	volume = {24},
+	number = {6},
+	pages = {487--497},
+	year = {2017},
+	publisher = {Mary Ann Liebert, Inc.},
+	doi = {10.1089/cmb.2016.0186}
+}
+
+@article{ilie2013racer,
+	title = {RACER: Rapid and accurate correction of errors in reads},
+	author = {Ilie, Lucian and Molnar, Martin},
+	journal = {Bioinformatics},
+	volume = {29},
+	number = {19},
+	pages = {2490--2493},
+	year = {2013},
+	publisher = {Oxford University Press},
+	doi = {10.1093/bioinformatics/btt426}
+}
+
+@article{keich2004spaced,
+	title = {On spaced seeds for similarity search},
+	journal = {Discrete Applied Mathematics},
+	volume = {138},
+	number = {3},
+	pages = {253-263},
+	year = {2004},
+	issn = {0166-218X},
+	doi = {https://doi.org/10.1016/S0166-218X(03)00382-2},
+	url = {https://www.sciencedirect.com/science/article/pii/S0166218X03003822},
+	author = {Uri Keich and Ming Li and Bin Ma and John Tromp},
+	keywords = {Gapped seeds, Seeded alignment, BLAST, Similarity search},
+	abstract = {Genomics studies routinely depend on similarity searches based on the strategy of finding short seed matches (contiguous k bases) which are then extended. The particular choice of the seed length, k, is determined by the tradeoff between search speed (larger k reduces chance hits) and sensitivity (smaller k finds weaker similarities). A novel idea of using a single deterministic optimized spaced seed was introduced in Ma et al. (Bioinformatics (2002) 18) to the above similarity search process and it was empirically demonstrated that the optimal spaced seed quadruples the search speed, without sacrificing sensitivity. Multiple, randomly spaced patterns, spaced q-grams, and spaced probes were also studied in Califano and Rigoutsos (Technical Report, IBM T.J. Watson Research Center (1995), Burkhardt, Kärkkäinen, CPM (2001), and Buhler, Bioinformatics 17 (2001) 419) and in other applications [(RECOMB (1999) 295, RECOMB (2000) 245)]. They were all found to be better than their contiguous counterparts. In this paper we study some of the theoretical and practical aspects of optimal seeds. In particular we demonstrate that the commonly used contiguous seed is in some sense the worst one, and we offer an algorithmic solution to the problem of finding the optimal seed.}
+}
+
+@article{brinda2015spaced,
+	title = {Spaced Seeds Improve k-mer-based Metagenomic Classification},
+	author = {Brinda, K. and Sykulski, M. and Kucherov, G.},
+	journal = {Bioinformatics},
+	volume = {31},
+	number = {22},
+	pages = {3584--3592},
+	year = {2015},
+	month = {11},
+	doi = {10.1093/bioinformatics/btv419},
+	note = {Epub 2015 Jul 25},
+	pmid = {26209798}
+}
+
+@article{ounit2016higher,
+	author = {Ounit, Rachid and Lonardi, Stefano},
+	title = {Higher classification sensitivity of short metagenomic reads with CLARK-S},
+	journal = {Bioinformatics},
+	volume = {32},
+	number = {24},
+	pages = {3823-3825},
+	year = {2016},
+	month = {08},
+	abstract = {Summary: The growing number of metagenomic studies in medicine and environmental sciences is creating increasing demands on the computational infrastructure designed to analyze these very large datasets. Often, the construction of ultra-fast and precise taxonomic classifiers can compromise on their sensitivity (i.e. the number of reads correctly classified). Here we introduce CLARK-S, a new software tool that can classify short reads with high precision, high sensitivity and high speed.Availability and Implementation: CLARK-S is freely available at http://clark.cs.ucr.edu/Contact:  stelo@cs.ucr.eduSupplementary information:  Supplementary data are available at Bioinformatics online.},
+	issn = {1367-4803},
+	doi = {10.1093/bioinformatics/btw542},
+	url = {https://doi.org/10.1093/bioinformatics/btw542},
+	eprint = {https://academic.oup.com/bioinformatics/article-pdf/32/24/3823/49027269/bioinformatics_32_24_3823.pdf},
+}
+
+@article{girotto2017theoretical,
+	title = {Metagenomic reads binning with spaced seeds},
+	journal = {Theoretical Computer Science},
+	volume = {698},
+	pages = {88-99},
+	year = {2017},
+	note = {Algorithms, Strings and Theoretical Approaches in the Big Data Era (In Honor of the 60th Birthday of Professor Raffaele Giancarlo)},
+	issn = {0304-3975},
+	doi = {https://doi.org/10.1016/j.tcs.2017.05.023},
+	url = {https://www.sciencedirect.com/science/article/pii/S0304397517304632},
+	author = {Samuele Girotto and Matteo Comin and Cinzia Pizzi},
+	keywords = {Spaced seeds, Clustering, Metagenomics},
+	abstract = {The growing number of sequencing projects in medicine and environmental sciences is creating new computational demands in the analysis and processing of these very large datasets. Recently we have proposed an algorithm called MetaProb that can accurately cluster metagenomic reads with a precision that is currently unmatched. The competitive advantage of MetaProb depends on the use of sequence signatures based on contiguous k-mers. Instead of using contiguous k-mers, in this work we explore the use of spaced seeds where mismatches are allowed at carefully predetermined positions. The experimental results show that the use of mismatches can further improve the accuracy and decrease the memory requirements. Availability: https://bitbucket.org/samu661/metaprob.}
+}
+
+@article{burkhardt2006enhanced,
+	title = {Enhanced sensitivity of short DNA sequence alignment through spaced seeds},
+	author = {Burkhardt, Stefan and Kärkkäinen, Juha},
+	journal = {BMC bioinformatics},
+	volume = {7},
+	number = {1},
+	pages = {1--11},
+	year = {2006},
+	publisher = {BioMed Central}
+}
+
+@article{nagarajan2009parametric,
+	title = {Parametric complexity of sequence assembly: theory and applications to next generation sequencing},
+	author = {Nagarajan, Niranjan and Pop, Mihai},
+	journal = {Journal of Computational Biology},
+	volume = {16},
+	number = {7},
+	pages = {897--908},
+	year = {2009},
+	publisher = {Mary Ann Liebert, Inc.}
+}
+
+@book{cormen2009introduction,
+	title = {Introduction to Algorithms},
+	edition = {3rd},
+	author = {Cormen, Thomas H. and Leiserson, Charles E. and Rivest, Ronald L. and Stein, Clifford},
+	year = {2009},
+	publisher = {MIT Press},
+	address = {Cambridge, MA},
+	pages = {990--994}
+}
+
+@article{leimeister2014fast,
+	author = {Leimeister, Chris-Andre and Boden, Marcus and Horwege, Sebastian and Lindner, Sebastian and Morgenstern, Burkhard},
+	title = {Fast alignment-free sequence comparison using spaced-word frequencies},
+	journal = {Bioinformatics},
+	volume = {30},
+	number = {14},
+	pages = {1991-1999},
+	year = {2014},
+	month = {04},
+	abstract = {Motivation: Alignment-free methods for sequence comparison are increasingly used for genome analysis and phylogeny reconstruction; they circumvent various difficulties of traditional alignment-based approaches. In particular, alignment-free methods are much faster than pairwise or multiple alignments. They are, however, less accurate than methods based on sequence alignment. Most alignment-free approaches work by comparing the word composition of sequences. A well-known problem with these methods is that neighbouring word matches are far from independent. Results: To reduce the statistical dependency between adjacent word matches, we propose to use ‘spaced words’, defined by patterns of ‘match’ and ‘don’t care’ positions, for alignment-free sequence comparison. We describe a fast implementation of this approach using recursive hashing and bit operations, and we show that further improvements can be achieved by using multiple patterns instead of single patterns. To evaluate our approach, we use spaced-word frequencies as a basis for fast phylogeny reconstruction. Using real-world and simulated sequence data, we demonstrate that our multiple-pattern approach produces better phylogenies than approaches relying on contiguous words. Availability and implementation: Our program is freely available at http://spaced.gobics.de/.Contact:  chris.leimeister@stud.uni-goettingen.deSupplementary information:  Supplementary data are available at Bioinformatics online. },
+	issn = {1367-4803},
+	doi = {10.1093/bioinformatics/btu177},
+	url = {https://doi.org/10.1093/bioinformatics/btu177},
+	eprint = {https://academic.oup.com/bioinformatics/article-pdf/30/14/1991/48925419/bioinformatics_30_14_1991.pdf},
+}
+
+@online{fowler2005fnv,
+	author = {Glenn Fowler and Landon Curt Noll and Kiem-Phong Vo},
+	title = {Fowler-Noll-Vo (FNV) Hash Function},
+	year = {2005},
+	url = {http://www.isthe.com/chongo/tech/comp/fnv/index.html},
+	note = {Accessed: 2024-06-12},
+}
+
+@article{camacho2009blast+,
+	title = {BLAST+: architecture and applications},
+	author = {Camacho, Christiam and Coulouris, George and Avagyan, Vahram and Ma, Ning and Papadopoulos, Jason and Bealer, Kevin and Madden, Thomas L},
+	journal = {BMC Bioinformatics},
+	volume = {10},
+	number = {1},
+	pages = {421},
+	year = {2009},
+	publisher = {BioMed Central}
+}
+
+@article{sun2005enhanced,
+	title = {Enhanced sensitivity of probabilistic sequence alignment using spaced seeds},
+	author = {Sun, Yanni and Buhler, Jeremy},
+	journal = {Journal of Computational Biology},
+	volume = {12},
+	number = {6},
+	pages = {847--861},
+	year = {2005},
+	publisher = {Mary Ann Liebert, Inc.}
+}
+
+@article{paten2011genome,
+	title = {Genome graphs and the evolution of genome inference},
+	author = {Paten, Benedict and Novak, Adam M and Eizenga, Jordan M and Garrison, Erik},
+	journal = {Genome Research},
+	volume = {27},
+	number = {5},
+	pages = {665--676},
+	year = {2011},
+	publisher = {Cold Spring Harbor Laboratory Press}
+}
+
+@article{turnbaugh2007human,
+	title = {The human microbiome project},
+	author = {Turnbaugh, Peter J and Ley, Ruth E and Hamady, Micah and Fraser-Liggett, Claire M and Knight, Rob and Gordon, Jeffrey I},
+	journal = {Nature},
+	volume = {449},
+	number = {7164},
+	pages = {804--810},
+	year = {2007},
+	publisher = {Nature Publishing Group}
+}
+
+@article{mak2006improvements,
+	title = {Improvements in Spaced Seed Design for DNA Similarity Search},
+	author = {Mak, David and Benson, Gary},
+	journal = {Bioinformatics},
+	volume = {22},
+	number = {14},
+	pages = {1653--1659},
+	year = {2006},
+	publisher = {Oxford University Press}
+}
+
+@article{chumakov2012bioinformatics,
+	title = {Computational challenges in the analysis of sequence data using spaced seeds},
+	author = {Chumakov, Sergey A and Ponomarenko, Mikhail P},
+	journal = {Bioinformatics and Computational Biology},
+	volume = {8},
+	number = {3},
+	pages = {194--206},
+	year = {2012},
+	publisher = {World Scientific}
+}
+
+@article{ebler2022pangenome,
+	title = {Pangenome-based genome inference allows efficient and accurate genotyping across a wide spectrum of variant classes},
+	author = {Ebler, Jan and Ebert, Peter and Clarke, William E and others},
+	journal = {Nature Genetics},
+	volume = {54},
+	number = {4},
+	pages = {518--525},
+	year = {2022},
+	publisher = {Nature Publishing Group},
+	doi = {10.1038/s41588-022-01043-w},
+	url = {https://doi.org/10.1038/s41588-022-01043-w}
+}
+
+@article{hahn2016rasbhari,
+	doi = {10.1371/journal.pcbi.1005107},
+	author = {Hahn, Lars AND Leimeister, Chris-André AND Ounit, Rachid AND Lonardi, Stefano AND Morgenstern, Burkhard},
+	journal = {PLOS Computational Biology},
+	publisher = {Public Library of Science},
+	title = {rasbhari: Optimizing Spaced Seeds for Database Searching, Read Mapping and Alignment-Free Sequence Comparison},
+	year = {2016},
+	month = {10},
+	volume = {12},
+	url = {https://doi.org/10.1371/journal.pcbi.1005107},
+	pages = {1-18},
+	abstract = {Many algorithms for sequence analysis rely on word matching or word statistics. Often, these approaches can be improved if binary patterns representing match and don’t-care positions are used as a filter, such that only those positions of words are considered that correspond to the match positions of the patterns. The performance of these approaches, however, depends on the underlying patterns. Herein, we show that the overlap complexity of a pattern set that was introduced by Ilie and Ilie is closely related to the variance of the number of matches between two evolutionarily related sequences with respect to this pattern set. We propose a modified hill-climbing algorithm to optimize pattern sets for database searching, read mapping and alignment-free sequence comparison of nucleic-acid sequences; our implementation of this algorithm is called rasbhari. Depending on the application at hand, rasbhari can either minimize the overlap complexity of pattern sets, maximize their sensitivity in database searching or minimize the variance of the number of pattern-based matches in alignment-free sequence comparison. We show that, for database searching, rasbhari generates pattern sets with slightly higher sensitivity than existing approaches. In our Spaced Words approach to alignment-free sequence comparison, pattern sets calculated with rasbhari led to more accurate estimates of phylogenetic distances than the randomly generated pattern sets that we previously used. Finally, we used rasbhari to generate patterns for short read classification with CLARK-S. Here too, the sensitivity of the results could be improved, compared to the default patterns of the program. We integrated rasbhari into Spaced Words; the source code of rasbhari is freely available at http://rasbhari.gobics.de/},
+	number = {10},
+}

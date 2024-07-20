@@ -1,0 +1,311 @@
+\chapter{A new version of our tool}
+\label{chp:develop}
+
+Nell'implementazione delle modifiche al tool \acs{MISSH}, sono state introdotte diverse ottimizzazioni per migliorarne l'efficienza. Una delle modifiche più significative riguarda la funzione di encoding dei singoli caratteri della sequenza nucleotidica in ingresso. Originariamente, questa funzione utilizzava una serie di istruzioni condizionali multiple per codificare ciascun carattere, come descritto nell'Algoritmo~\ref{alg:original_encoding_function}. È stata sostituita questa logica con una funzione di manipolazione bitwise
+\begin{verbatim}
+   encode = ((ch >> 1) & 0b11)
+\end{verbatim}
+suggerita dal paper di JellyFish \cite{marcais2011jellyfish}. Questo tipo di funzione è noto per essere significativamente più efficiente in termini di tempo di esecuzione, poiché le operazioni bitwise sono intrinsecamente più veloci rispetto alle istruzioni condizionali multiple.
+
+\begin{algorithm}[!ht]
+	\caption{Original encoding function}
+	\label{alg:original_encoding_function}
+	
+	\SetKwFunction{FEncodingOriginal}{char\_to\_int}
+	\Fn{\FEncodingOriginal{$ch$}}{
+		\If{$ch = \mathtt{A}$}{
+			\KwRet{$0$}\;
+		}
+		\ElseIf{$ch = \mathtt{C}$}{
+			\KwRet{$1$}\;
+		}
+		\ElseIf{$ch = \mathtt{G}$}{
+			\KwRet{$2$}\;
+		}
+		\ElseIf{$ch = \mathtt{T}$}{
+			\KwRet{$3$}\;
+		}
+		\KwRet{$4$} \tcc*{$ch$ is a N character}
+	}
+\end{algorithm}
+
+Dopo l'implementazione di questa modifica, sono stati condotti alcuni test preliminari per valutare l'efficienza della nuova funzione di encoding. I risultati hanno mostrato un miglioramento significativo rispetto alla versione precedente. Nella Tabella~\ref{tab:}, che riporta gli speed-up ottenuti, si può osservare come la nuova funzione bitwise di encoding abbia ridotto i tempi di elaborazione, con guadagni di efficienza notevoli.
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l | rr | r}
+		\multirow{2}{*}{method} & original & JellyFish like & \multirow{2}{*}{speed-up} \\
+		& encoding & encoding & \\
+		\toprule
+		naive & 94.3 & 11.2 & 8.42 \\
+		FSH & 48.0 & 22.4 & 2.14 \\
+		ISSH & 27.0 & 12.9 & 2.09 \\
+		\bottomrule
+	\end{tabular}
+	\caption[Confronto dei tempi di elaborazione tra la funzione originale e la funzione bitwise.]{Confronto dei tempi di elaborazione (espressi in millisecondi) tra la funzione originale e la funzione bitwise. Per i test è stata utilizzata una sequenza di 1010 caratteri e lo spaced seed $Q = \texttt{10111011}$. I dati sono una media di 10 esecuzioni.}
+	\label{tab:}
+\end{table}
+
+Tuttavia, l'introduzione della funzione bitwise di encoding ha evidenziato una criticità: a differenza della vecchia funzione, la nuova non riconosce i “caratteri \texttt{N}" nella sequenza nucleotidica, che rappresentano basi sconosciute. La vecchia funzione predisponeva alla generazione di warning ed errori quando incontrava questi caratteri, fornendo un livello di controllo della correttezza dei dati. Durante i test, è stato osservato che il controllo della correttezza dei simboli viene già effettuato nel momento in cui il tool carica in memoria il file FASTA contenente la sequenza nucleotidica. In questa fase, eventuali simboli non corretti vengono gestiti e filtrati. Di conseguenza, ulteriori controlli di correttezza post-caricamento risultano ridondanti e dispendiosi.
+
+Un'altra modifica importante riguarda le funzioni che calcolano l'hashing. Tutte le funzioni sono state ottimizzate in modo tale da calcolare contemporaneamente il forward hashing e il reverse hashing. Questo approccio non solo migliora l'efficienza complessiva del processo di hashing, ma assicura anche che i risultati siano coerenti con quelli ottenuti utilizzando i tool \acs{FSH}, \acs{ISSH} e \acs{MISSH}, che impiegano la stessa funzione di hashing. Implementando queste modifiche, è stato ottenuto un significativo miglioramento delle prestazioni del tool \acs{MISSH}, mantenendo al contempo l'affidabilità e la correttezza dei risultati.
+
+
+
+
+Nella seconda fase delle modifiche apportate al tool \acs{MISSH} per migliorarne l'efficienza, è emersa la necessità di rivedere la funzione di hash utilizzata. In precedenza, \acs{MISSH} implementava una variante specifica della funzione di hash Rabin-Karp. Tuttavia, si è reso evidente che era necessaria una funzione di hash più generale e conforme ai canoni definiti in letteratura, per garantire una maggiore flessibilità e aderenza agli standard.
+
+\subsubsection*{Array di contributi}
+L'implementazione di una nuova funzione di hash ha richiesto un'attenta valutazione delle diverse opzioni disponibili. Una delle proposte iniziali era di gestire i contributi dovuti a ciascun carattere della sequenza nucleotidica salvandoli in un array dedicato. Questo array di contributi avrebbe consentito di calcolare l'hashing value $h(x[i + Q])$ per ogni $Q$-gram sommando i singoli contributi di ciascun carattere. In teoria, questa soluzione avrebbe permesso di implementare qualsiasi funzione di hash in modo modulare e flessibile, unendo i vari contributi per formare l'hash value complessivo del $Q$-gram $x[i + Q]$. Tuttavia, questa soluzione è stata rapidamente scartata dopo una valutazione pratica. Nonostante l'eleganza teorica del metodo, l'implementazione non ha mostrato alcun vantaggio significativo in termini di speed-up rispetto all'uso della funzione ntHash2, una delle funzioni di hash più efficienti disponibili per il contesto delle sequenze nucleotidiche. I test hanno dimostrato che la gestione degli array di contributi comportava un overhead computazionale che vanificava i potenziali benefici dell'approccio modulare.
+
+
+\subsubsection*{Chunk di \texttt{one\_to\_keep}}
+Nella continua ricerca di miglioramenti per rendere il tool MISSH più efficiente, è stata introdotta una nuova funzione denominata “a chunk di \verb|one_to_keep|". Le variabili \verb|one_to_keep| sono dei vettori creati durante il preprocessing di MISSH, che mantengono in memoria le posizioni degli hash precedenti che sono utili per calcolare l'hash corrente.
+
+\begin{example}
+	Sia $Q = \{0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 14, 16, 19, 20, 21, 23, 24, 25, 27, 28, 29, 30 \}$ la forma dello spaced seed \texttt{1111011101110010100111011101111}. I vettori \verb|one_to_keep|$_i$ calcolati dal preprocessing di MISSH sono i seguenti: \begin{align*}
+		\texttt{one\_to\_keep}_0 &= \{ 1, 2, 3, 5, 6, 8, 9, 13, 14, 16, 17, 19, 20, 21 \} \\
+		\texttt{one\_to\_keep}_1 &= \{ 4, 7, 11, 15, 18 \} \\
+		\texttt{one\_to\_keep}_2 &= \{ 10, 12 \} \\
+	\end{align*}
+	
+	È importante notare che l'intersezione degli insiemi (disgiunti) \verb|one_to_keep|$_i$ e dell'insieme $\{ 0 \}$ costituisce l'insieme delle posizioni dei caratteri \texttt{1} indicati dalla forma $Q$ dello spaced seed.
+\end{example}
+
+La produzione di una nuova stringa utilizzando i vettori \verb|one_to_keep| avviene in questo modo:
+\begin{enumerate}
+	\item Si prende l'$n$-esima stringa precedente.
+	\item Si effettua uno shift a sinistra di $n$ posizioni.
+	\item Si cancella il primo carattere di ogni run di caratteri consecutivi.
+	\item Si aggiunge l’ultimo carattere di ogni run di caratteri consecutivi.
+\end{enumerate}
+
+\begin{example}
+	Sia $Q$ lo spaced seed dell'esempio precedente e $x$ la sequenza nucleotidica $x = \texttt{AGGCCCACTGGAAGTTGTAGCCACCGAGCCAG[...]}$. Il $Q$-gram $x[0 + Q]$ sarà 
+	\begin{center}
+		\begin{tabular}{r || l}
+			$x$ & \texttt{AGGCCCACTGGAAGTTGTAGCCACCGAGCCAG[...]} \\
+			$Q$ & \texttt{1111011101110010100111011101111} \\
+			$x[0 + Q]$ & \texttt{AGGC\ CAC\ GGA\ \ T\ G\ \ GCC\ CCG\ GCCA} \\
+		\end{tabular}
+	\end{center}
+	
+	I tre vettori \verb|one_to_keep|$_i$ associati sono:
+	\begin{center}
+		\begin{tabular}{r || l}
+			$x[0 + Q]$ & \texttt{AGGCCACGGATGGCCCCGGCCA} \\
+			\verb|one_to_keep|$_0$ & \texttt{\ GGC\ AC\ GA\ \ \ CC\ CG\ CCA} \\
+			\verb|one_to_keep|$_1$ & \texttt{\ \ \ \ C\ \ G\ \ \ G\ \ \ C\ \ G\ \ \ } \\
+			\verb|one_to_keep|$_2$ & \texttt{\ \ \ \ \ \ \ \ \ \ T\ G\ \ \ \ \ \ \ \ \ } \\
+			& \texttt{A\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ } \\
+		\end{tabular}
+	\end{center}
+	
+	Volendo calcolare il $Q$-gram successivo, $x[1 + Q]$ dato il $Q$-gram precedentemente calcolato, i passi da calcolare sono i seguenti:
+	\begin{center}
+		\begin{tabular}{l}
+			\verb|one_to_keep|$_0$\\
+			\toprule
+			\verb|-GGC-AC-GA---CC-CG-CCA| \\
+			\verb|GGC-AC-GA---CC-CG-CCA-| \\
+			\verb|-GC--C--A----C--G--CA-| \\
+			\verb|-GCC-CT-AA---CA-GA-CAG| \\
+			\midrule
+			8 saved characters \\
+			6 deleted characters \\
+			6 entered characters \\
+			\midrule
+			in total: 12 in/del operations \\
+		\end{tabular}
+		\hspace{\fill}
+		\begin{tabular}{l}
+			\verb|one_to_keep|$_1$\\
+			\toprule
+			\verb|----C--G---G---C--G---| \\
+			\verb|---C--G---G---C--G----| \\
+			\verb|----------------------| \\
+			\verb|----A--G---T---C--C---| \\
+			\midrule
+			0 saved characters \\
+			5 deleted characters \\
+			5 entered characters \\
+			\midrule
+			in total: 10 in/del operations \\
+		\end{tabular}
+	\end{center}
+	
+	\begin{center}
+		\begin{tabular}{l}
+			\verb|one_to_keep|$_2$\\
+			\toprule
+			\verb|----------T-G---------| \\
+			\verb|---------T-G----------| \\
+			\verb|----------------------| \\
+			\verb|----------T-C---------| \\
+			\midrule
+			0 saved characters \\
+			2 deleted characters \\
+			2 entered characters \\
+			\midrule
+			in total: 4 in/del operations \\
+		\end{tabular}
+	\end{center}
+	
+	Si forma, così, il $Q$-gram $x[1 + Q] = \texttt{GGCCACTGAATTCCACGACCAG}$, coerentemente con il calcolo secondo il metodo naive:
+	\begin{center}
+		\begin{tabular}{r || l}
+			$x$ & \texttt{AGGCCCACTGGAAGTTGTAGCCACCGAGCCAG[...]} \\
+			$Q$ & \texttt{\ 1111011101110010100111011101111} \\
+			$x[1 + Q]$ & \texttt{\ GGCC\ ACT\ GAA\ \ T\ T\ \ CCA\ CGA\ CCAG} \\
+		\end{tabular}
+	\end{center}
+\end{example}
+
+Questo metodo è efficiente solo se la cardinalità di ogni run di caratteri consecutivi è superiore all’unità. Se invece si prende il chunk di $n$\footnote{$n = Q[chunk[i][1].start] + chunk[i][1].length - Q[chunk[i][0].start] - chunk[i][0].length$, $\forall i \in chunk.size()$.} posizioni precedenti e si effettua uno shift rotazionale sinistro di $m$\footnote{$m = chunk[i][1].start + chunk[i][1].length - chunk[i][0].start - chunk[i][0].length$} posizioni, è possibile salvare qualche carattere in più.
+
+\begin{example}
+	Siano $x$ e $Q$ la sequenza nucleotidica e lo spaced seed dell'esempio precedente. 
+	
+	\begin{center}
+		\begin{tabular}{c | l}
+			\multirow{8}{*}{\rotatebox[origin=c]{90}{$\texttt{one\_to\_keep}_0$}}
+			& \verb|    -GGC -AC -GA  - -  -CC -CG -CCA| \\
+			& \verb|-GGC -AC -GA  - -  -CC -CG -CCA    | \\
+			& \verb|    --AC -GA ---  - -  -CG -CC ----| \\
+			& \verb|    -CAC -GA -TT  - -  -CG -CC -CCG| \\
+			\cline{2-2}
+			& 8 saved characters \\
+			& 6 deleted characters \\
+			& 6 entered characters \\
+			\cline{2-2}
+			& in total: 12 in/del operations (speed-up of 1.00) \\
+			%& speed-up: 1.00 compared to the previous example \\
+			\bottomrule
+			\multicolumn{2}{c}{$x[0 + Q]$ is used to calculate $x[4 + Q]$} \\
+		\end{tabular}
+	\end{center}
+	
+	\begin{center}
+		\begin{tabular}{c | l}
+			\multirow{8}{*}{\rotatebox[origin=c]{90}{$\texttt{one\_to\_keep}_1$}}
+			& \verb|    ---- C-- G--  - G  --- C-- G---| \\
+			& \verb|---- C-- G--  - G  --- C-- G---    | \\
+			& \verb|    ---- G-- ---  - -  --- G-- ----| \\
+			& \verb|    ---- G-- G--  - C  --- G-- G---| \\
+			\cline{2-2}
+			& 2 saved characters \\
+			& 3 deleted characters \\
+			& 3 entered characters \\
+			\cline{2-2}
+			& in total: 6 in/del operations (speed-up of 1.67) \\
+			%& speed-up: 1.67 compared to the previous example \\
+			\bottomrule
+			\multicolumn{2}{c}{$x[0 + Q]$ is used to calculate $x[4 + Q]$} \\
+		\end{tabular}
+	\end{center}
+	
+	\begin{center}
+		\begin{tabular}{c | l}
+			\multirow{8}{*}{\rotatebox[origin=c]{90}{$\texttt{one\_to\_keep}_2$}}
+			& \verb|     ---- --- ---  T -  G-- --- ----| \\
+			& \verb|---- --- ---  T -  G-- --- ----     | \\
+			& \verb|     ---- --- ---  G -  --- --- ----| \\
+			& \verb|     ---- --- ---  G -  C-- --- ----| \\
+			\cline{2-2}
+			& 1 saved characters \\
+			& 1 deleted characters \\
+			& 1 entered characters \\
+			\cline{2-2}
+			& in total: 2 in/del operations (speed-up of 2.00) \\
+			%& speed-up: 2.00 compared to the previous example \\
+			\bottomrule
+			\multicolumn{2}{c}{$x[0 + Q]$ is used to calculate $x[5 + Q]$} \\
+		\end{tabular}
+	\end{center}
+\end{example}
+
+Prima di procedere ulteriormente con l'implementazione, è stato necessario valutare i vantaggi in termini di efficienza. Per il caso in esempio, si è calcolato che per ogni hash si effettueranno 20 in/del operations anziché 26. Ciò dovrebbe portare a un aumento dell'efficienza di circa 1.30 volte. Tuttavia, confrontando questa soluzione con ntHash2, il fattore speed-up cresce solo da 0.54 a 0.70, rimanendo insufficiente per superare le prestazioni di ntHash2.
+
+Sorge quindi la domanda: “Questo metodo è effettivamente migliore del metodo naive?" Analizzando il numero di operazioni,
+\begin{itemize}
+	\item per \verb|one_to_keep|$_0$ sono necessarie 14 operazioni XOR per una costruzione \emph{ex-novo}, mentre riutilizzando un hash precedente ne servono 12 più 1 shift rotazionale\footnote{In termini di operazioni bitwise, uno shift rotazionale (destro o sinistro) corrisponde a 2 operazioni di shift semplice e 1 operazione OR.}.
+	\item per \verb|one_to_keep|$_1$ servono 5 operazioni XOR per costruirlo da capo, mentre sono necessarie 6 operazioni XOR e 1 shift rotazionale per usare un hash precedente.
+	\item per \verb|one_to_keep|$_2$ non ci sono differenze nel numero di operazioni XOR, ma costruendolo da zero si risparmierebbe lo shift.
+\end{itemize}
+ne consegue che per costruire da zero i tre chunk si userebbero 21 operazioni XOR, mentre riutilizzando gli hash precedenti servirebbero 20 operazioni XOR e 3 operazioni di shift rotazionale (equivalenti a 29 operazioni bitwise). Pertanto, ricostruire da zero potrebbe effettivamente risultare più efficiente.
+
+
+
+\subsubsection*{\texttt{one\_to\_keep} as spaced seed}
+Il successivo miglioramento nella gestione del tool \acs{MISSH} ha riguardato l'idea di trattare i vettori \verb|one_to_keep| come spaced seed. Tuttavia, anche questa proposta si è rivelata inefficace. Trattare il vettore \verb|one_to_keep| come spaced-seed produce $Q$-gram che non corrispondono al risultato desiderato.
+
+\begin{example}
+	Consideriamo un esempio pratico:
+	\begin{center}
+		\begin{tabular}{r || l}
+			$x$ & \texttt{AGGCCCACTGGAAGTTGTAGCCACCGAGCCAG[...]} \\
+			$Q$ & \texttt{1111011101110010100111011101111} \\
+			$x[0 + Q]$ & \texttt{AGGC\ CAC\ GGA\ \ T\ G\ \ GCC\ CCG\ GCCA} \\
+		\end{tabular}
+	\end{center}
+
+	I contributi dati dai tre vettori \verb|one_to_keep|$_i$, codificati come spaced seed, sono:
+	\begin{center}
+		\begin{tabular}{l || l}
+			$i = 0$ & \verb| 111011011000110110111| \\
+			$i = 1$ & \verb|    100100010001001   | \\
+			$i = 2$ & \verb|          101         | \\
+		\end{tabular}
+	\end{center}
+
+	Utilizzando il vettore \verb|one_to_keep| come spaced-seed, si ottengono dei $Q$-gram non correlati alle sequenze originariamente cercate. Come si può vedere nella tabella seguente, nessuna delle stringhe indicate è descrittiva di un vettore \verb|one_to_keep|$_i$:
+	\begin{center}
+		\begin{tabular}{l | l | l}	
+			$i = 0$ & $i = 1$ & $i = 2$ \\
+			%\verb|111011011000110110111| & \verb|100100010001001| & \verb|101| \\
+			\toprule
+			\verb|AGGCCCTAGTGAGC| & \verb|ACCAT| & \verb|AG| \\
+			\verb|GGCCATGGTGTGCC| & \verb|GCTAT| & \verb|GC| \\
+			\verb|GCCACGGTTTACCA| & \verb|GCGGG| & \verb|GC| \\
+			\verb|CCCCTGATGAGCAC| & \verb|CAGTT| & \verb|CC| \\
+			\verb|[...]| & \verb|[...]| & \verb|[...]| \\
+		\end{tabular}
+	\end{center}
+
+	Non è percorribile nemmeno la strada dell'adattare il vettore \verb|one_to_keep| tenendo conto dei caratteri \texttt{0} dovuti allo spaced-seed originale, \begin{center}
+		\begin{tabular}{l || l}
+			%$Q$ & \texttt{1111011101110010100111011101111} \\
+			$i = 0$ & \verb| 111001100110000000011001100111| \\
+			$i = 1$ & \verb|     10001000000100000010001   | \\
+			$i = 2$ & \verb|              100001           | \\
+		\end{tabular}
+	\end{center} poiché le stringhe risultanti necessitano di essere ulteriormente processate e divise in più sottostringhe per poter essere utilizzate correttamente.
+	
+	
+	\begin{center}
+		\begin{tabular}{l | l | l}
+			$i = 0$ & $i = 1$ & $i = 2$ \\
+			%\verb|111001100110000000011001100111| & \verb|10001000000100000010001| & \verb|100001| \\
+			\toprule
+			\verb|AGGCAGGGCCCGCC| & \verb|ACAAA| & \verb|AC| \\
+			\verb|GGCACGACCCGCCA *| & \verb|GCAGC| & \verb|GA| \\
+			\verb|GCCCTAACAGACAG| & \verb|GAGCC| & \verb|GT| \\
+			\verb|CCCTGAGACAGAGC| & \verb|CCTCG| & \verb|CT| \\
+			\verb|CCAGGGTCCGCGCC| & \verb|CTTAA| & \verb|CG| \\
+			\verb|CACGATTCGCCCCG| & \verb|CGGCG *| & \verb|CG| \\
+			\verb|ACTAATGGACACGG| & \verb|AGTCC| & \verb|AA| \\
+			\verb|CTGAGGTAGAGGGT| & \verb|CAAGC| & \verb|CA| \\
+			\verb|TGGGTTAGCGCGTC| & \verb|TAGAA| & \verb|TG *| \\
+			\verb|[...]| & \verb|[...]| & \verb|[...]| \\
+		\end{tabular}
+	\end{center}
+
+	Lo stesso problema della divisione dell'hashing value di una stringa non è semplice, né efficiente. Consideriamo le stringhe \begin{itemize}
+		\item \verb|GGC-AC-GA---CC-CG-CCA|, stringa scritta correttamente, contributo dato dal primo vettore \verb|one_to_keep|
+		\item e \verb|GGCACGACCCGCCA|, presa dalla tabella precedente e risultante dall'utilizzo del vettore \verb|one_to_keep| come spaced-seed avendo considerato anche i caratteri \texttt{0} dello spaced-seed originale
+	\end{itemize}
+	
+	I loro hashing value secondo la funzione di hash implementata anche da ntHash1 sono \verb|111001010000001111101011011| e \verb|11110111001011100011|, rispettivamente per la prima e per la seconda stringa. È evidente la necessità di manipolare il secondo valore per farlo diventare come il primo, ma questo compito richiede la rilettura di ogni carattere per cancellare il suo attuale contributo e per restituire il contributo riposizionato correttamente. Questa procedura non è efficiente dal punto di vista computazionale e rende impraticabile la strada del gestire i vettori \verb|one_to_keep| come spaced seed.
+\end{example}
+
+\subimport{}{01_DuoHash}

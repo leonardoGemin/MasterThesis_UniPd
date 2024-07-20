@@ -1,0 +1,63 @@
+\section{DuoHash: new features}
+\label{sec:DuoHash-newFeatures}
+
+The latest update of the \acs{MISSH} tool, called DuoHash, introduces a number of new features that significantly improve the flexibility and efficiency of the hashing process of nucleotide sequences. The two main new features are the possibility to easily modify the hash function and the implementation of the \verb|getSpacedKmer| function, which converts encodings into nucleotide sequences and saves them in a FASTA file, creating a dataset that can be used by third-party tools such as JellyFish. These improvements make DuoHash an extremely versatile and powerful tool for analysing genomic sequences.
+
+One of the strengths of DuoHash is the possibility to easily change the hash function without compromising the efficiency of the tool. The new structure of DuoHash is designed in such a way that the hashing function can be replaced by mainly acting on the \verb|getHashes| function. This makes it possible to quickly adapt the tool to different calculation requirements and hashing algorithms, while still maintaining the same base of encoding values calculated by \acs{MISSH}. The current implementation of DuoHash uses a rolling hash function, which exploits pre-computation of values and bitwise operations to guarantee efficient calculation. However, due to the modularity of the system, other hash functions can be implemented with only a few modifications to the code. For example, one could replace the rolling hash function with a hash function based on the algorithm of \ac{FNV} \cite{fowler2005fnv}, known for its simplicity and efficiency. The Algorithm~\ref{alg:DuoHash_getHashes_fnv} describes a possible implementation of the hash function \acs{FNV}-1A.
+
+\begin{algorithm}[!ht]
+	\caption{DuoHash: getHashes function with \acs{FNV}-1A hash function.}
+	\label{alg:DuoHash_getHashes_fnv}
+	
+	$\mathrm{FNV\_offset\_basis} \gets \texttt{0xCBF29CE484222325}$\;
+	$\mathrm{FNV\_prime} \gets \texttt{0x00000100000001B3}$\;
+
+	\SetKwFunction{FgetHashes}{getHashes}
+	\Fn{\FgetHashes{$Hash$, $s(Q)$}}{
+		$k \gets \lceil s(Q) / 4 \rceil$\tcp*{$Hash = \langle encoding, forward, reverse \rangle$}
+		$forward \gets \mathrm{FNV\_offset\_basis}$\;
+		$reverse \gets \mathrm{FNV\_offset\_basis}$\;
+		
+		\For{$i \gets 0$ \KwTo $k - 1$}{
+			$forward \gets (forward \oplus i$-th byte of $encoding) \times \mathrm{FNV\_prime}$\;
+			$reverse \gets (reverse \oplus (k - 1 - i)$-th byte of $encoding) \times \mathrm{FNV\_prime}$\;
+		}
+	}
+\end{algorithm}
+
+\subsubsection*{Creation of FASTA file}
+In addition to the flexibility of the \verb|getHashes| function, DuoHash introduces the \verb|getSpacedKmer| function, shown in the Algorithm~\ref{alg:DuoHash_getSpacedKmer}. This function converts the encodings into nucleotide sequences and saves them in a FASTA file, making it possible to use the data with third-party tools such as JellyFish \cite{marcais2011jellyfish}, a programme used for fast k-mer counting in \acs{DNA} sequences.
+
+\begin{algorithm}[!ht]
+	\caption{DuoHash: getSpacedKmer function}
+	\label{alg:DuoHash_getSpacedKmer}
+	
+	\SetKwFunction{FgetSpacedKmer}{getSpacedKmer}
+	\Fn{\FgetSpacedKmer{$Hash$, $s(Q)$}}{
+		$k \gets \lfloor s(Q) / 4 \rfloor$\tcp*{$Hash = \langle encoding, spacedKmer \rangle$}
+		\For{$i \gets 0$ \KwTo $k$}{
+			$curr\_encoding\_byte \gets i$-th byte of $encoding$\;
+			$curr\_spacedKmer\_word$ is the $i$-th word of 32-bits of $spacedKmer$\;
+			$curr\_spacedKmer\_word \gets \mathrm{e4\_to\_char}[curr\_encoding\_byte]$\;
+		}
+		
+		\If{$s(Q) \bmod 4 \neq 0$}{
+			$curr\_encoding\_byte \gets k$-th byte of $encoding$\;
+			$curr\_spacedKmer\_word$ is the $k$-th word of 32-bits of $spacedKmer$\;
+			
+			\If{$s(Q) \bmod 4 = 3$}{
+				$curr\_spacedKmer\_word \gets \mathrm{e3\_to\_char}[curr\_encoding\_byte]$\;
+			}
+			\ElseIf{$s(Q) \bmod 4 = 2$}{
+				$curr\_spacedKmer\_word \gets \mathrm{e2\_to\_char}[curr\_encoding\_byte]$\;
+			}
+			\ElseIf{$s(Q) \bmod 4 = 1$}{
+				$curr\_spacedKmer\_word \gets \mathrm{e1\_to\_char}[curr\_encoding\_byte]$\;
+			}
+		}
+		
+		$spacedKmer[k] = \mathrm{'\backslash0'}$\;
+	}
+\end{algorithm}
+
+This function works by breaking down the encoding variable into 1-byte chunks and converting them into nucleotide characters using look-up tables (\verb|e4_to_char|, \verb|e3_to_char|, etc.). The result is a nucleotide sequence \verb|spacedKmer| that is then saved in a FASTA file.

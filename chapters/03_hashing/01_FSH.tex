@@ -1,0 +1,148 @@
+\section{FSH: Fast Spaced Seed Hashing}
+\label{sec:FSH}
+
+The \ac{FSH} \cite{girotto2018fsh} is an algorithm developed to increase the efficiency of hash calculation for spaced seeds in bioinformatics applications. This approach exploits the similarities between spaced seed hash values computed at neighbouring positions within an input sequence through a dynamic programming technique aimed at reducing the number of symbols read and encoded in the hash computation process. This results in a higher processing speed than traditional methods.
+
+Symbol encoding, a process of transforming data into a different format using a specific encoding scheme, is essential for the numerical representation of DNA or protein sequences. The encoding used by \acs{FSH} is based on the function \[ encode(\texttt{ch}): \mathcal{A} \to \{ \texttt{0}, \texttt{1} \}^{\log_2 |\mathcal{A}|} \] and the four nitrogenous bases are mapped as follows: \begin{align*}
+	encode(\texttt{A}) &= \texttt{00}  &  encode(\texttt{C}) &= \texttt{01} \\
+	encode(\texttt{G}) &= \texttt{10}  &  encode(\texttt{T}) &= \texttt{11} 
+\end{align*}
+This encoding is necessary for the subsequent application of hashing functions, as it transforms the sequence data into a numerical format suitable for computational processing.
+
+In the paper of \acs{FSH}, the authors considered the Rabin-Karp rolling hash \cite{cormen2009introduction}, defined as follows: \[ h\left( x[i + Q] \right) = \bigvee_{k \in Q} \left( encode(x_{i + k}) <\!< m(k) \cdot \log_2 |\mathcal{A}| \right), \] where $m(k) = \left| \{ i \in Q \; | \; i < k \} \right| $ is the number of shifts that must be applied to the $k$-th symbol. 
+
+\begin{example}
+	In connection with the example from the previous chapter, the steps for calculating the encoding of the $Q$-gram $x[0 + Q]$ are given:
+	
+	\begin{center}
+		\begin{tabular}{r || ccccccccccc}
+			$x$ & \texttt{C} & \texttt{T} & \texttt{T} & \texttt{G} & \texttt{T} & \texttt{C} & \texttt{G} & \texttt{T} & \texttt{T} & \texttt{G} & \texttt{[...]} \\
+			$Q$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & & \\
+			$m$ & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 & & \\
+			$x[0 + Q]$ & \texttt{C} & \texttt{T} & \texttt{T} & & \texttt{T} & & \texttt{G} & & \texttt{T} & & \\
+			$encode(x[0 + Q])$ & \texttt{01} & \texttt{11} & \texttt{11} & & \texttt{11} & & \texttt{10} & & \texttt{11} & & \\
+		\end{tabular}
+		
+	\end{center}
+
+	And thus for the calculation of the hashing value referred to it: \begin{align*}
+		h\left( x[0 + Q] \right) &= (\texttt{01} <\!< 0) \vee (\texttt{11} <\!< 2) \vee (\texttt{10} <\!< 4) \vee {} \\
+		&\qquad {} \vee (\texttt{01} <\!< 6) \vee (\texttt{10} <\!< 8) \vee (\texttt{01} <\!< 10) \\
+		&= \texttt{111011111101} 
+	\end{align*}
+	
+	Similarly, the hashing values for the remaining $Q$-grams are: \begin{align*}
+		x[1 + Q] &= \texttt{TTGCTG}  &  h(x[1 + Q]) &= \texttt{101101101111} \\
+		x[2 + Q] &= \texttt{TGTGTA}  &  h(x[2 + Q]) &= \texttt{001110111011} \\
+		x[3 + Q] &= \texttt{GTCTGC}  &  h(x[3 + Q]) &= \texttt{011011011110} \\
+		x[4 + Q] &= \texttt{TCGTAT}  &  h(x[4 + Q]) &= \texttt{110011100111}
+	\end{align*}
+\end{example}
+
+It is now possible to define the set of hashing values of a string $x$ given a spaced seed $Q$: \[ \mathcal{H}(x, Q) = \left\{ h(x[0 + Q]),\; h(x[1 + Q]),\; \dots,\; h(x[n - 1 + Q]) \right\}, \] where $n = |x| - s(Q) + 1$ is the number of all $Q$-grams of $x$.
+
+According to the authors of \acs{FSH}, the aim is to minimise the number of times a symbol needs to be read and encoded in order to calculate $\mathcal{H}(x, Q)$.
+
+
+%The idea is to reuse part of the previous hashes to speed up the calculation of the new value. A new definition can be introduced: \[ \mathcal{C}_j = \{ k \in Q \; | \; k + j \in Q \wedge m(k) = m(k + j) - m(j) \}. \] $\mathcal{C}_j$ is the set of positions of $Q$ which, after $j$ shifts, still belong to $Q$, with the property that both positions $k$ and $k + j$ belong to $Q$ and are separated by $j - 1$ characters \texttt{1} (not necessarily consecutive). In other words, if $h(x[i + Q])$ is being calculated, $\mathcal{C}_j$ contains the set of positions that can be retrieved from the previously calculated $h(x[i - j + Q])$.
+The idea is to reuse part of the previous hashes to speed up the calculation of the new value. A new definition can be introduced: \[ \mathcal{C}_j = \{ k \in Q \; | \; k + j \in Q \wedge m(k) = m(k + j) - m(j) \}. \] $\mathcal{C}_j$ is the set of positions that can be retrieved from the previously calculated $h(x[i - j + Q])$ when $h(x[i + Q])$ is being calculated.
+
+\begin{example}
+	Having already calculated $h(x[0 + Q])$, the time has come to calculate $h(x[1 + Q])$. In this example, the calculation of $\mathcal{C}_1$ is shown.
+	
+	\begin{center}
+		\label{example:C_1}
+		\begin{tabular}{r || c|cccccccc|c}
+			$k$ & & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+			\midrule
+			$Q$ & & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} \\
+			$m(k)$ & & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 \\
+			\midrule
+			$Q <\!< 1$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \\
+			$m(k + 1)$ & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 & \\
+			\midrule
+			$Q$ & & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} \\
+			$Q <\!< 1$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \\
+			$(k \in Q) \wedge (k + 1 \in Q)$ & & T & T & F & F & F & F & F & F & \\
+			\midrule
+			$m(k)$ & & 0 & 1 & 2 & 3 & 3 & 4 & 4 & 5 & 5 \\
+			$m(k + 1) - m(1)$ & -1 & 0 & 1 & 2 & 2 & 3 & 3 & 4 & 4 & \\
+			$m(k) = m(k + 1) - m(1)$ & & T & T & T & F & T & F & T & F & \\
+			\midrule
+			$\mathcal{C}_1$ & & 0 & 1 & & & & & & & \\
+		\end{tabular}
+	\end{center}
+	
+	The symbols at positions $\mathcal{C}_1 = \{ 0, 1 \}$ of the hash $h(x[1 + Q])$ have already been encoded in the hash $h(x[0 + Q])$ and it is possible to reuse them without having to compute them \emph{ex-novo} each time. To complete the computation of the hash $h(x[1 + Q])$ it is necessary to compute the remaining $|Q \setminus \mathcal{C}_1| = 4$ symbols, which must be read from $x$ at positions $i + k$, where $i = 1$ and $k \in Q \setminus \mathcal{C}_1 = \{ 2, 4, 6, 8 \}$.
+	
+	\begin{center}
+		\begin{tabular}{r || ccccccccccc}
+			$x$ & \texttt{C} & \texttt{T} & \texttt{T} & \texttt{G} & \texttt{T} & \texttt{C} & \texttt{G} & \texttt{T} & \texttt{T} & \texttt{G} & \texttt{[...]} \\
+			$x[0 + Q]$ & \texttt{C} & \texttt{T} & \texttt{T} & & \texttt{T} & & \texttt{G} & & \texttt{T} & & \\
+			$\mathcal{C}_1$ & & 0 & 1 & & & & & \\
+			$Q \setminus \mathcal{C}_1$ & & & & 2 & & 4 & & 6 & & 8 \\
+			$x[1 + Q]$ & & \texttt{T} & \texttt{T} & \texttt{G} & & \texttt{C} & & \texttt{T} & & \texttt{G} \\
+		\end{tabular}
+	\end{center}
+	
+	For completeness, all values of $\mathcal{C}_j$ are given:\begin{align*}
+		\mathcal{C} &= \left\{ \mathcal{C}_1,\; \mathcal{C}_2,\; \dots,\; \mathcal{C}_8 \right\} \\
+		&= \left\{ \{0, 1\},\; \{0\},\; \emptyset,\; \{0\},\; \emptyset,\; \{0\},\; \emptyset,\; \{0\} \right\}
+	\end{align*}
+\end{example}
+
+To optimise the reuse of part of the previous hashes, it is necessary to minimise the number of times a symbol must be read and encoded. It is sufficient, therefore, to find the value $j$ that maximises $|\mathcal{C}_j|$, and this can be solved via the function \[ ArgBH(k) = \argmax_{j \in \{ 1, 2, \dots, k \}} |\mathcal{C}_j|. \] Having already computed the previous $j$ hashes, the best hashing value can be found at position $j - ArgBH(j)$. This will produce a saving in terms of symbols that do not have to be read and encoded again equal to $|\mathcal{C}_{ArgBH(j)}|$. For the extraction of useful symbols from the previous hashes, a mask, $Mask(j)$, is defined to filter the relevant positions. Following the observations made so far, it is possible to compute all hashing values $\mathcal{H}(x, Q)$ using the dynamic programming Algorithm~\ref{alg:FSH}.
+
+\begin{algorithm}[!ht]
+	\caption{FSH: Fast Spaced Seed Hashing}
+	\label{alg:FSH}
+	$h_0 \gets \text{compute } h(x[0 + Q])$\;
+	\For{$i \gets 1$ \KwTo $|x| - s(Q)$}{
+		\If{$i < s(Q)$}{
+			$p \gets ArgBH(i)$\;
+			$h_i \gets h_i$ \KwOr $((h_{i - p}$ \KwAnd $Mask(p)) >\!> (m(p) \cdot \log_2 |\mathcal{A}|))$\;
+			\ForAll{$k \in Q \setminus \mathcal{C}_{p}$}{
+				insert $encode(x_{i + k})$ at position $m(k) \cdot \log_2 |\mathcal{A}|$ of $h_i$\;
+			}
+		}
+		\Else{
+			$p \gets ArgBH(s(Q) - 1)$\;
+			$h_i \gets h_i$ \KwOr $((h_{i - p}$ \KwAnd $Mask(p)) >\!> (m(p) \cdot \log_2 |\mathcal{A}|))$\;
+			\ForAll{$k \in Q \setminus \mathcal{C}_{p}$}{
+				insert $encode(x_{i + k})$ at position $m(k) \cdot \log_2 |\mathcal{A}|$ of $h_i$\;
+			}
+		}
+	}
+\end{algorithm}
+
+A second algorithm, Algorithm~\ref{alg:FSH_multiple}, is also provided for use when working with more than one spaced seed. The use of more than one spaced seed increases the sensitivity \cite{leimeister2014fast} and, therefore, merits a dedicated approach capable of increasing the speed-up of the algorithm. 
+
+Let $\vec{Q} = \{ Q_0, Q_1, \dots, Q_{n - 1} \}$ be the set of $n$ spaced seeds, all of the same length $s(Q)$. It is possible to compute, for each spaced seed $Q_j$ its vector $m_j(k)$ as described above. In order to compare a given spaced seed $Q_j$ with all other spaced seeds it is necessary to redefine the set $\mathcal{C}_j$ as follows: \[ \mathcal{C}_j^{y,\; z} = \{ k \in Q_y \; | \; k + j \in Q_z \wedge m_y(k) = m_z(k + j) - m_z(j) \}. \] In this new definition $\mathcal{C}_j^{y,\; z}$ evaluates the number of symbols in common between the seed $Q_y$ and the $j$-th shift of the seed $Q_z$. Similarly, it is necessary to redefine the function $ArgBH(k)$ as follows: \[ ArgBSH(y,\; k) = \argmax_{z \in \{ 0, 1, \dots, n - 1 \},\; j \in \{ 1, 2, \dots, k \}} |\mathcal{C}_j^{y,\; z}|. \] $ArgBSH(y,\; k)$ returns, for the seed $Q_y$, the pair of indices $(z, p)$ representing the best seed $Q_z$ and the best hash $p$. The updated algorithm can be found at page~\pageref{alg:FSH_multiple}.
+
+\begin{algorithm}[!ht]
+	\caption{Fast Multiple Spaced Seed Hashing}
+	\label{alg:FSH_multiple}
+	\For{$j \gets 0$ \KwTo $n - 1$}{
+		$h_{0,\; j} \gets \text{compute } h(x[0 + Q_j])$\;
+	}
+	\For{$i \gets 1$ \KwTo $|x| - s(Q)$}{
+		\For{$j \gets 0$ \KwTo $n - 1$}{
+			\If{$i < s(Q)$}{
+				$(z, p) \gets ArgBSH(j, i)$\;
+				$h_{i,\; j} \gets h_{i,\; j}$ \KwOr $((h_{i - p,\; z}$ \KwAnd $Mask(p)) >\!> (m_z(p) \cdot \log_2 |\mathcal{A}|))$\;
+				\ForAll{$k \in Q_j \setminus \mathcal{C}_p^{j, z}$}{
+					insert $encode(x_{i + k})$ at position $m_j(k) \cdot \log_2 |\mathcal{A}|$ of $h_{i,\; j}$\;
+				}
+			}
+			\Else{
+				$(z, p) \gets ArgBSH(j, s(Q) - 1)$\;
+				$h_{i,\; j} \gets h_{i,\; j}$ \KwOr $((h_{i - p,\; z}$ \KwAnd $Mask(p)) >\!> (m_z(p) \cdot \log_2 |\mathcal{A}|))$\;
+				\ForAll{$k \in Q_j \setminus \mathcal{C}_p^{j, z}$}{
+					insert $encode(x_{i + k})$ at position $m_j(k) \cdot \log_2 |\mathcal{A}|$ of $h_{i,\; j}$\;
+				}
+			}
+		}
+	}
+\end{algorithm}
+
+Demonstrating significant performance enhancements, \acs{FSH} accelerates spaced seed hashing by $1.6\times$ compared to conventional methods across diverse seed configurations. Particularly notable is its $4\times$ to $5\times$ speedup in scenarios of high seed autocorrelation. This efficiency amplifies with longer read lengths typical of modern sequencing technologies or intricate spaced seed designs. Moreover, this work paves the path for further exploration into accelerating spaced seed hashing through innovative indexing techniques and assessing its broader utility in various bioinformatics applications.

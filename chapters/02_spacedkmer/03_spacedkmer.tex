@@ -1,0 +1,47 @@
+\section[Spaced $k$-mer]{Spaced k-mer}
+\label{sec:spacedkmer}
+
+Spaced seeds ---~and, consequently, spaced $k$-mer~--- represent fundamental tools in bioinformatics, particularly in the context of sequence alignment and the search for similarities between DNA, RNA and proteins \cite{brinda2015spaced,ounit2016higher,girotto2017theoretical}. Unlike traditional $k$-mer, spaced seeds allow for the introduction of gaps (ignored positions) within the nucleotide or amino acid sequence, thus allowing for a more flexible comparison of sequences. In formal terms, a spaced seed $Q$ is a string on the alphabet $\{0, 1\}$, where the \texttt{1} correspond to the matching positions: \[ Q = \left\{ x \; | \; x \in \{0, 1\}^*, \; \#_1(x) = w \right\}, \] where $k$ is the \emph{length}, or \emph{span}, and $w$ is the \emph{weight} of the spaced seed. Since any position \texttt{0} placed before the first \texttt{1} and any position \texttt{0} placed after the last \texttt{1} does not change the spaced seed, we only consider spaced seeds starting and ending with the character \texttt{1}, defined by the following regular expression: \begin{equation}\label{eq:spaced_kmer}
+	Q = \left\{ x \; | \; x = 1 + 1 \cdot (0 + 1)^* \cdot 1, \; \#_1(x) = w \right\}.
+\end{equation}
+
+One can also represent the spaced seeds by their \emph{shape} $Q$, which is the set of positions of the \texttt{1} in the spaced seed \cite{keich2004spaced}. In this case the weight of $Q$ is defined as $k = |Q|$, while the length, or span, is equal to $s(Q) = \max(Q) + 1$. 
+
+Spaced $k$-mer, also called $Q$-gram, are fragments of a nucleotide sequence $x$ that respect the pattern dictated by a spaced seed $Q$. Given a string $x$, the spaced $k$-mer $x[i + Q]$ is a string defined as follows: \[ x[i + Q] = \left\{ x_{i + k} \; | \; k \in Q \right\}, \] where $i \in \left\{0, 1, \dots, |x| - s(Q) \right\}$. 
+
+\begin{example}
+	Let us consider the spaced seed \texttt{111010101}, defined as $Q = \{ 0, 1, 2, 4, 6, 8 \}$, and the sequence seen in the previous section, \[ \texttt{CTTGTCGTTGACT}. \] Then the $Q$-gram at position $0$ of $x$ is defined as
+	
+	\begin{center}
+		\begin{tabular}{r || ccccccccccc}
+			$x$ & \texttt{C} & \texttt{T} & \texttt{T} & \texttt{G} & \texttt{T} & \texttt{C} & \texttt{G} & \texttt{T} & \texttt{T} & \texttt{G} & \texttt{[...]} \\
+			$Q$ & \texttt{1} & \texttt{1} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & \texttt{0} & \texttt{1} & & \\
+			$x[0 + Q]$ & \texttt{C} & \texttt{T} & \texttt{T} & & \texttt{T} & & \texttt{G} & & \texttt{T} & & \\
+		\end{tabular}
+	\end{center}
+	
+	The other $Q$-grams, in total there are $|x| - s(Q) + 1 = 5$ $Q$-grams, are: \begin{align*}
+		x[1 + Q] &= \texttt{TTGCTG} & x[2 + Q] &= \texttt{TGTGTA} \\
+		x[3 + Q] &= \texttt{GTCTGC} & x[4 + Q] &= \texttt{TCGTAT}
+	\end{align*}
+\end{example}
+
+%Spaced seeds have one of their major benefits in that they are able to enhance the sensitivity of sequence alignment without significantly sacrificing specificity. This is useful in cases where sequences could have local variations such as small mutations or indels. However, implementing algorithms that work with spaced seeds is generally more computationally expensive than contiguous $k$-mer due to the increase in gap complexity. 
+%
+%Spaced seeds apart are extensively used within various spectrums of bioinformatics. Spaced seeds have been widely used in the latter to enhance sensitivity and speed of the search \cite{bin2002patternhunter,li2004patternhunter}. In homology searching, algorithms such as PatternHunter use spaced seeds to improve the efficiency of comparing genomic sequences of different species, reducing the number of false positives compared to methods based on contiguous $k$-mer \cite{li2004patternhunter}. Spaced $k$-mer can also be applied in constructing more robust De Bruijn graphs for \emph{de novo} assembly of genomes that can detect correct contigs even when contaminated with some sequencing errors \cite{nagarajan2009parametric}. Also, In metagenomics field improved distinction between similar species and identification of new genomic variants have made possible by using spaced seeds for analysis of microbial communities \cite{burkhardt2006enhanced}.
+
+	\subsection{Applications in Bioinformatics and Benefits}
+	\label{subsec:spacedKmer-application-and-benefits}
+	
+	One of the greatest advantages is that spaced seeds can enhance sequence alignment sensitivity without much loss in specificity, which can be handy when a sequence may have local genetic variation like small mutations or indels. Furthermore, spaced seeds also detect homology regions with discontinuities or variations that would elude $k$-mer contiguous approaches \cite{mak2006improvements}. However, due to the handling of more complex gaps such as: those that appear in between and optimizing spaced seeds design; this algorithm is generally computationally intensive than its counterpart for work spacing seed contiguously on $k$-mer. In fact, it is very difficult to compute correspondences and solve them while designing and optimizing spaced seeds because there might be many gaps between them \cite{chumakov2012bioinformatics}. But these problems are outweighed by significant increase in sensitivity and accuracy resulting from the use of spaced seed.
+	
+	Spaced seeds are commonly used across various bioinformatics disciplines. For instance, they are employed for enhancing sequence alignment algorithms such as BLAST and its variants where they have been shown to boost both sensitivity as well as speed during search operations \cite{bin2002patternhunter,li2004patternhunter}. The introduction of spaced seeds into BLAST improved the detection of homologous regions in biological sequences thus reducing false positives and improving overall efficiency of alignment process \cite{camacho2009blast+}.
+	
+	Among other things, algorithms like PatternHunter utilize spaced seed to make comparison between genomic sequences from different species more efficient by minimizing false positives compared to contiguous methods based on $k$-mer \cite{li2004patternhunter}. This approach is particularly useful when comparing complex genomes that often contain local variations masking global similarities. Moreover alternative methods cannot detect remote homologies unlike these based on spaced seed \cite{sun2005enhanced}.
+	
+	In order to create more robust De Bruijn graphs for de novo genome assembly, spaced $k$-mer can be used which can help identify correct contigs despite presence of sequencing errors \cite{nagarajan2009parametric}. Spaced seeds allow for more continuous and complete genomic assemblies with fewer artifacts due to systematic and random reading errors in sequences \cite{paten2011genome}.
+	
+	Moreover, within metagenomics, the use of spaced seed improves microbial community analyses, making it easier to differentiate close species better and identify new genomic variants \cite{burkhardt2006enhanced}. This is especially important when dealing with complex systems such as soil or human gut, where high microbial diversity requires fine species resolution necessary to model their ecological and functional dynamics \cite{turnbaugh2007human}.
+	
+	In summary, spaced seeds are a major breakthrough in bioinformatics that a\-chie\-ves a tradeoff between sensitivity and specificity in various applications. Although they may need more computational resources to achieve this goal, the accuracy improvement in sequence analysis is enough reason to use them.
+

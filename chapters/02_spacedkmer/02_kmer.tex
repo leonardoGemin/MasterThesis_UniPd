@@ -1,0 +1,41 @@
+\section[$k$-mer]{k-mer}
+\label{sec:kmer}
+
+$k$-mer are sequences of nucleotides of length $k$, resulting from the decomposition of a longer genomic sequence.
+
+\begin{example}
+	Considering the DNA sequence \[ \texttt{CTTGTCGTTGACT}, \] its 6-mer are: \begin{gather*}
+		\texttt{CTTGTC} \quad \texttt{TTGTCG} \quad \texttt{TGTCGT} \quad \texttt{GTCGTT}\\
+		\texttt{TCGTTG} \quad \texttt{CGTTGA} \quad \texttt{GTTGAC} \quad \texttt{TTGACT} \\
+	\end{gather*}
+\end{example}
+
+The number of $k$-mer in a sequence is governed by the following equation \[ \#(k\text{-mer}) = \ell - k + 1, \] where $\ell$ is the length of the sequence.
+
+In bioinformatics, $k$-mer have become one of the most powerful versatile tools that are applied in various genomic studies. Also, they are instrumental in genome assembly, metagenomics, gene expression analysis, pattern and motif recognition as well as phylogenetic analysis thus proving their importance and value in scientific research. These applications confirm how fundamental manipulation and analysis of these patterns are to our understanding of biological processes and genetic dynamics. The choice of value of $k$ is important because it affects the sensitivity and specificity of the analyses: very small values may lead to a lot of redundancy and low specificity making it hard to differentiate very similar sequences; on the other hand large values improve specificity but at the same time reduce coverage which increases computation complexity. In practice, the optimal $k$ value depends on what is being analyzed and its nature. For example, in de novo assembly of genomes, $k$ values between 21 and 31 are commonly used since they optimally combine high sequence coverage with specificities for many purposes.
+
+
+
+
+	\subsection{Applications in Bioinformatics}
+	\label{subsec:kmer-applications}
+	
+	Genome assembly is one of the most relevant applications. In this context, genome reconstruction from short fragments using $k$-mer, a process known as \emph{de novo} assembly \cite{nagarajan2013sequence}. During this process, $k$-mer facilitate the overlapping and connection of sequence fragments, forming structures called \emph{contigs} and \emph{scaffolds}.
+	
+	In metagenomics \cite{wood2014kraken}, $k$-mer are used to identify and quantify the presence of different microbial species in environmental samples. This is possible by comparing the $k$-mer derived from the samples with known sequence databases, thus allowing the taxonomic composition of the sample to be determined. The analysis of $k$-mer in metagenomics facilitates study complex microbial communities contributing to understanding biodiversity and ecological dynamics within diverse environments.
+	
+	Another significant application for which $k$-mer are useful is gene expression analysis \cite{conesa2016survey}: \acs{RNA}-seq techniques create $k$-mer from transcripts that can be mapped on reference genomes to identify and count expressed genes. These enable precise measurements of gene expression levels required for studies on gene function, cellular responses as well as disease.
+	
+	$k$-mer is also used to detect repetitive patterns and motifs in \acs{DNA} and \acs{RNA} sequences \cite{frazer2004vista}. Identifying these recurring patterns, as well as functional motifs, is fundamental to understanding gene regulation and protein functions. Notably, motifs are particular sequences that are vital for regulatory protein binding sites. Researchers can also find and study such hidden regulatory elements within genomic sequences using $k$-mer.
+	
+	Lastly, $k$-mer helps in building phylogenetic trees based on the similarity of genomic sequences during phylogenetic analysis \cite{ondov2016mash}. This method is quite fast, especially when dealing with large-scale evolutionary studies using huge genomic datasets. Comparing $k$-mer across different species can help to reconstruct evolutionary relationships and give insights into the past and diversity of life on Earth.
+
+
+
+
+	\subsection{Benefits and Disadvantages}
+	\label{subsec:kmer-benefit-and-disadvantages}
+	
+	The use of $k$-mer in bioinformatics offers numerous advantages, making them valuable tools in multiple genomic analyses. First of all, $k$-mer allow great computational efficiency. Indeed, the decomposition of long sequences into blocks of a fixed size facilitates the indexing and searching of sub-sequences, accelerating complex processes such as sequence comparison and assembly \cite{compeau2011how,li2009fast}. This feature is particularly advantageous in the era of big data, where speed of processing is crucial. Furthermore, $k$-mer processing can be easily parallelised. This means that computational tasks can be divided among several processors or cores, significantly improving the performance of bioinformatics software on modern architectures, such as supercomputers and GPUs. Another important advantage is the reduction in complexity that $k$-mer can offer: by representing complex genomic sequences in terms of $k$-mer, subsequent calculations can be simplified, making it easier to compare and assemble sequences \cite{chikhi2014informed}. This approach helps to manage and interpret complex genomic data, making intricate analyses more accessible.
+	
+	However, the use of $k$-mer also has some disadvantages. One of the main ones concerns the choice of the $k$-value, which can be critical for the success of the analysis. A sub-optimal $k$-value may in fact compromise results by increasing the number of false positives or negatives. Small values of $k$ can lead to greater redundancy and lower specificity, while large values can reduce sequence coverage and increase computational complexity. Therefore, the selection of the value of $k$ requires a careful balance between specificity and coverage, adapted to the specific application. The storage of $k$-mer represents another disadvantage, as it can require a considerable amount of memory, especially when working with large genomes or many samples. Efficient memory management is therefore essential to avoid performance problems and to ensure that computational resources are optimally utilised \cite{marcais2011jellyfish,li2017efficient}. Finally, $k$-mer can be sensitive to noise in input sequences \cite{ilie2013racer}. Read errors or mutations can generate unique $k$-mer that do not correctly represent the original sequence, negatively affecting the accuracy of analyses. This sensitivity requires the implementation of filtering and error correction strategies to ensure that the data used are as accurate and representative as possible.
